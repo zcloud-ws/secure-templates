@@ -1,0 +1,45 @@
+package config
+
+import (
+	"encoding/json"
+	"io"
+)
+
+type SecretEngine string
+
+const (
+	SecretEngineVault       SecretEngine = "vault"
+	SecretEngineLocalFile   SecretEngine = "local-file"
+	SecretEngineOnePassword SecretEngine = "one-password"
+)
+
+type SecureTemplateConfig struct {
+	SecretEngine      SecretEngine      `json:"secret_engine"`
+	VaultConfig       VaultConfig       `json:"vault_config,omitempty"`
+	OnePasswordConfig OnePasswordConfig `json:"one_password_config,omitempty"`
+	LocalFileConfig   LocalFileConfig   `json:"local_file_config,omitempty"`
+}
+
+type VaultConfig struct {
+	Address      string `json:"address"`
+	Token        string `json:"token"`
+	SecretEngine string `json:"secret_engine,omitempty"`
+	Namespace    string `json:"ns,omitempty"`
+}
+
+type OnePasswordConfig struct {
+}
+
+type LocalFileConfig struct {
+	Filename   string `json:"filename"`
+	EncPrivKey string `json:"enc_priv_key,omitempty"`
+}
+
+func (cfg *SecureTemplateConfig) Json(out io.Writer) error {
+	data, err := json.MarshalIndent(cfg, "", "  ")
+	if err != nil {
+		return err
+	}
+	_, err = out.Write(data)
+	return err
+}

@@ -1,0 +1,68 @@
+version: "3.4"
+
+services:
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: st_vault
+    restart: "no"
+    ports:
+      - "8200:8200"
+      - "8201:8201"
+    volumes:
+      - "./config/vault-config.hcl:/vault/config/config.hcl"
+      - "vault-data:/vault"
+    cap_add:
+      - IPC_LOCK
+    command:
+      - vault
+      - server
+      - -config
+      - /vault/config/config.hcl
+    depends_on:
+      - pg
+    networks:
+      - vault-net
+    environment:
+      VAULT_ADDR: http://localhost:8200
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 500M
+  pg:
+    image: postgres:15
+    container_name: st_pg
+    restart: "no"
+    hostname: pg
+    ports:
+      - "55432:5432"
+    networks:
+      - vault-net
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vault
+    volumes:
+      - ./sql/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - pg-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 500M
+volumes:
+  vault-data:
+  pg-data:
+networks:
+  vault-net:
+    driver: bridge
+#
+#  docker run --rm -it --name zcloud-infra-vault \
+#  --cap-add=IPC_LOCK \
+#  -p 8200:8200 \
+#  -p 8201:8201 \
+#  -v "$PWD/data/log:/vault/log" \
+#  -v "$PWD/data/file:/vault/file" \
+#  -v "$PWD/config/vault-config.hcl:/vault/config/config.hcl" \
+#  -e "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" \
+#  -e "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" \
+#  hashicorp/vault:1.15 vault server -config /vault/config/config.hcl
