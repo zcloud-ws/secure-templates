@@ -70,7 +70,7 @@ fi
 
 export FILE_NAME="secure-templates_${INSTALL_OS}_${INSTALL_ARCH}.tar.gz"
 
-export DOWNLOAD_LINK="https://github.com/edimarlnx/secure-templates/releases/download/v0.0.1-alpha.1/${FILE_NAME}"
+export DOWNLOAD_LINK="https://github.com/edimarlnx/secure-templates/releases/download/${INSTALL_VERSION}/${FILE_NAME}"
 
 echo "Download from: $DOWNLOAD_LINK"
 echo "Install to: $INSTALL_DEST_DIR"
