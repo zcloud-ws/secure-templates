@@ -21,6 +21,11 @@ curl -s https://raw.githubusercontent.com/edimarlnx/secure-templates/main/script
 Go to [releases page](https://github.com/edimarlnx/secure-templates/releases) and download the file according your
 system.
 
+## Samples
+
+- [.env](./test/samples/.env): [.rendered-env](./test/samples/.rendered-env) 
+- [k8s-secret.yaml](./test/samples/k8s-secret.yaml): [k8s-secret-rendered.yaml](./test/samples/k8s-secret-rendered.yaml)
+
 ## Supported Secrets engines
 
 - [Vault](https://www.vaultproject.io/): A free Vault solution by [HashiCorp](https://www.hashicorp.com/)
