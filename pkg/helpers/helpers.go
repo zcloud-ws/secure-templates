@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/base64"
@@ -34,27 +35,45 @@ func ParseConfig(filename string) config.SecureTemplateConfig {
 	return cfg
 }
 
-func ExportRsaPrivateKeyAsPemStr(privKey *rsa.PrivateKey) string {
-	privKeyBytes := x509.MarshalPKCS1PrivateKey(privKey)
-	privKeyPem := pem.EncodeToMemory(
-		&pem.Block{
-			Type:  "RSA PRIVATE KEY",
-			Bytes: privKeyBytes,
-		},
-	)
-	return base64.StdEncoding.EncodeToString(privKeyPem)
+func GenRsaPrivateKey(pwd string) ([]byte, error) {
+	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return nil, err
+	}
+	block := &pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
+	}
+	if pwd != "" {
+		blk, err := x509.EncryptPEMBlock(rand.Reader, block.Type, block.Bytes, []byte(pwd), x509.PEMCipherAES256)
+		if err != nil {
+			return nil, err
+		}
+		block = blk
+	}
+	privKeyPem := pem.EncodeToMemory(block)
+	return privKeyPem, nil
 }
 
-func ParseRsaPrivateKeyFromPemStr(privKeyBase64 string) (*rsa.PrivateKey, error) {
+func ParseRsaPrivateKeyFromPemStr(privKeyBase64, pwd string) (*rsa.PrivateKey, error) {
 	data, err := base64.StdEncoding.DecodeString(privKeyBase64)
 	if err != nil {
 		return nil, err
 	}
-	block, _ := pem.Decode([]byte(data))
+	block, _ := pem.Decode(data)
 	if block == nil {
 		return nil, errors.New("failed to parse PEM block containing the key")
 	}
-	privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	var certData []byte
+	if pwd != "" && x509.IsEncryptedPEMBlock(block) {
+		certData, err = x509.DecryptPEMBlock(block, []byte(pwd))
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		certData = block.Bytes
+	}
+	privKey, err := x509.ParsePKCS1PrivateKey(certData)
 	if err != nil {
 		return nil, err
 	}

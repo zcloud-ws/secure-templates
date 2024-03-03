@@ -24,7 +24,8 @@ func (v *LocalFileConnector) Init(secTplConfig config.SecureTemplateConfig) erro
 	v.secretFile = secTplConfig.LocalFileConfig.Filename
 	v.secrets = map[string]map[string]string{}
 	if secTplConfig.LocalFileConfig.EncPrivKey != "" {
-		privKey, err := helpers.ParseRsaPrivateKeyFromPemStr(secTplConfig.LocalFileConfig.EncPrivKey)
+		passphrase := helpers.GetEnv("GPG_PASSPHRASE", secTplConfig.LocalFileConfig.Passphrase)
+		privKey, err := helpers.ParseRsaPrivateKeyFromPemStr(secTplConfig.LocalFileConfig.EncPrivKey, passphrase)
 		if err != nil {
 			return err
 		}

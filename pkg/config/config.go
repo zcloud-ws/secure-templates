@@ -33,6 +33,7 @@ type OnePasswordConfig struct {
 type LocalFileConfig struct {
 	Filename   string `json:"filename"`
 	EncPrivKey string `json:"enc_priv_key,omitempty"`
+	Passphrase string `json:"passphrase,omitempty"`
 }
 
 func (cfg *SecureTemplateConfig) Json(out io.Writer) error {

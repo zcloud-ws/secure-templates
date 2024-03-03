@@ -1,8 +1,8 @@
 package main
 
 import (
-	rand2 "crypto/rand"
-	"crypto/rsa"
+	"crypto/md5"
+	"encoding/base64"
 	"fmt"
 	config2 "github.com/edimarlnx/secure-templates/pkg/config"
 	"github.com/edimarlnx/secure-templates/pkg/connectors"
@@ -13,6 +13,7 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"time"
 )
 
 var (
@@ -36,7 +37,7 @@ func initApp(args []string, outfile io.Writer) {
 	app.Usage = appUsage
 	app.Version = appVersion
 	app.EnableBashCompletion = true
-	var config, output, secretFile string
+	var config, output, secretFile, passphrase string
 	if outfile != nil {
 		app.Writer = outfile
 	}
@@ -67,14 +68,24 @@ func initApp(args []string, outfile io.Writer) {
 					Value:       fmt.Sprintf("%s/test/local-file-secret.json", workdir),
 					Destination: &secretFile,
 				},
+				&cli.StringFlag{
+					Name:        "gpg-passphrase",
+					EnvVars:     []string{"GPG_PASSPHRASE"},
+					Value:       "",
+					Destination: &passphrase,
+				},
 			},
 			Action: func(cCtx *cli.Context) error {
-				privateKey, err := rsa.GenerateKey(rand2.Reader, 2048)
+				if passphrase == "" {
+					passphrase = fmt.Sprintf("%x", md5.Sum([]byte(time.Now().String())))
+				}
+				privateKey, err := helpers.GenRsaPrivateKey(passphrase)
 				cfg := config2.SecureTemplateConfig{
 					SecretEngine: config2.SecretEngineLocalFile,
 					LocalFileConfig: config2.LocalFileConfig{
 						Filename:   secretFile,
-						EncPrivKey: helpers.ExportRsaPrivateKeyAsPemStr(privateKey),
+						EncPrivKey: base64.StdEncoding.EncodeToString(privateKey),
+						Passphrase: passphrase,
 					},
 					VaultConfig: config2.VaultConfig{
 						Address:      "http://localhost:8200",

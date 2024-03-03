@@ -29,6 +29,8 @@ func Test_initApp(t *testing.T) {
 				configFile,
 				"-secret-file",
 				fmt.Sprintf("%s/test/local-file-secret-test.json", workdir),
+				"-gpg-passphrase",
+				"test-pwd",
 			},
 			requiredStrings: []string{},
 			envs: map[string]string{
