@@ -2,11 +2,18 @@ package main
 
 import (
 	"bytes"
+	"fmt"
+	"os"
 	"strings"
 	"testing"
 )
 
 func Test_initApp(t *testing.T) {
+	workdir, err := os.Getwd()
+	if err != nil {
+		workdir = os.TempDir()
+	}
+	configFile := "test/local-file-cfg-test.json"
 	tests := []struct {
 		name            string
 		args            []string
@@ -19,11 +26,13 @@ func Test_initApp(t *testing.T) {
 				"secure-templates",
 				"init-config",
 				"-o",
-				"test/local-file-cfg.json",
+				configFile,
+				"-secret-file",
+				fmt.Sprintf("%s/test/local-file-secret-test.json", workdir),
 			},
 			requiredStrings: []string{},
 			envs: map[string]string{
-				"SEC_TPL_CONFIG": "test/local-file-cfg.json",
+				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
@@ -40,7 +49,7 @@ func Test_initApp(t *testing.T) {
 				"saved on secret",
 			},
 			envs: map[string]string{
-				"SEC_TPL_CONFIG": "test/local-file-cfg.json",
+				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
@@ -57,7 +66,7 @@ func Test_initApp(t *testing.T) {
 				"saved on secret",
 			},
 			envs: map[string]string{
-				"SEC_TPL_CONFIG": "test/local-file-cfg.json",
+				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
@@ -74,7 +83,7 @@ func Test_initApp(t *testing.T) {
 				"saved on secret",
 			},
 			envs: map[string]string{
-				"SEC_TPL_CONFIG": "test/local-file-cfg.json",
+				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
@@ -91,7 +100,7 @@ func Test_initApp(t *testing.T) {
 				"saved on secret",
 			},
 			envs: map[string]string{
-				"SEC_TPL_CONFIG": "test/local-file-cfg.json",
+				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
@@ -107,7 +116,7 @@ func Test_initApp(t *testing.T) {
 				"CLIENT_APP_PASSWORD=2dabe3d7c66fb75f751202fdab19266b",
 			},
 			envs: map[string]string{
-				"SEC_TPL_CONFIG": "test/local-file-cfg.json",
+				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
@@ -125,7 +134,7 @@ func Test_initApp(t *testing.T) {
 				"CLIENT_APP_PASSWORD: 2dabe3d7c66fb75f751202fdab19266b",
 			},
 			envs: map[string]string{
-				"SEC_TPL_CONFIG":   "test/local-file-cfg.json",
+				"SEC_TPL_CONFIG":   configFile,
 				"SECRET_NAME":      "st-secret",
 				"SECRET_NAMESPACE": "dev-ns",
 			},
