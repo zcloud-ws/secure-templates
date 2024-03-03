@@ -2,11 +2,30 @@
 
 Secure Templates is a tool to render templates using go-templates and load data values from secrets engine.
 
+## Installation for Linux and Mac
+
+### Install on /usr/local/bin with sudo
+
+```shell
+curl -s https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/install.sh | sudo sh -
+```
+
+### Install on work directory without sudo
+
+```shell
+curl -s https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/install.sh | sh -
+```
+
+## Manual installation and Windows users
+
+Go to [releases page](https://github.com/edimarlnx/secure-templates/releases) and download the file according your
+system.
+
 ## Supported Secrets engines
 
 - [Vault](https://www.vaultproject.io/): A free Vault solution by [HashiCorp](https://www.hashicorp.com/)
-  - In development, you can use a docker to run Vault. [See](dev/vault/README.md)
-- Local file: Local file using rsa key par to encrypt data 
+    - In development, you can use a docker to run Vault. [See](dev/vault/README.md)
+- Local file: Local file using rsa key par to encrypt data
 
 ## Config file
 
@@ -26,7 +45,6 @@ Secure Templates is a tool to render templates using go-templates and load data 
 }
 ```
 
-
 ## Commands
 
 ### init-config
@@ -37,7 +55,7 @@ Initialize a sample config with `local-file` as a secret engine
 secure-templates init-config -o local-file-cfg.json
 ```
 
-#### Options 
+#### Options
 
 ```text
 NAME:
@@ -59,13 +77,15 @@ OPTIONS:
 
 Manage local file secret engine
 
-Create or update the key `app_passwd` into secret `core` with value `abc123` 
+Create or update the key `app_passwd` into secret `core` with value `abc123`
+
 ```shell
 secure-templates local-secret put core app_passwd abc123
 ```
+
 #### Subcommands arguments
 
-- `put`: `SECRET` `KEY` `VALUE`  
+- `put`: `SECRET` `KEY` `VALUE`
 
 #### Options
 
@@ -90,9 +110,11 @@ OPTIONS:
 Render template using values from configured secret engine
 
 Render a template file
+
 ```shell
 secure-templates FILEPATH
 ```
+
 #### Arguments
 
 - `FILEPATH`: Filepath for template to render.
@@ -129,7 +151,6 @@ GLOBAL OPTIONS:
 - `SEC_TPL_CONFIG`: Path to config file.
 - `SEC_TPL_OUTPUT`: Path to output template file.
 
-
 ## Template Functions
 
 * `base64Encode`: Encode a base 64 string,
@@ -142,7 +163,7 @@ GLOBAL OPTIONS:
 
 # Author
 
-Edimar Cardoso 
+Edimar Cardoso
 
 Emails: [edimarlnx@gmail.com](mailto:edimarlnx@gmail.com) [edimar@zcloud.ws](mailto:edimar@zcloud.ws)
 
