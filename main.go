@@ -26,13 +26,17 @@ func main() {
 }
 
 func initApp(args []string, outfile io.Writer) {
+	workdir, err := os.Getwd()
+	if err != nil {
+		workdir = os.TempDir()
+	}
 	app := cli.NewApp()
 	app.Name = appName
 	app.Description = "Secure Templates is a tool to render templates using go-templates and load data values from secrets engine."
 	app.Usage = appUsage
 	app.Version = appVersion
 	app.EnableBashCompletion = true
-	var config, output string
+	var config, output, secretFile string
 	if outfile != nil {
 		app.Writer = outfile
 	}
@@ -58,13 +62,18 @@ func initApp(args []string, outfile io.Writer) {
 			Usage: "Init a sample config",
 			Flags: []cli.Flag{
 				&outputFlag,
+				&cli.StringFlag{
+					Name:        "secret-file",
+					Value:       fmt.Sprintf("%s/test/local-file-secret.json", workdir),
+					Destination: &secretFile,
+				},
 			},
 			Action: func(cCtx *cli.Context) error {
 				privateKey, err := rsa.GenerateKey(rand2.Reader, 2048)
 				cfg := config2.SecureTemplateConfig{
 					SecretEngine: config2.SecretEngineLocalFile,
 					LocalFileConfig: config2.LocalFileConfig{
-						Filename:   "test/local-file-secret.json",
+						Filename:   secretFile,
 						EncPrivKey: helpers.ExportRsaPrivateKeyAsPemStr(privateKey),
 					},
 					VaultConfig: config2.VaultConfig{
