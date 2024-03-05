@@ -10,7 +10,6 @@ import (
 	"github.com/edimarlnx/secure-templates/pkg/render"
 	"github.com/urfave/cli/v2"
 	"io"
-	"log"
 	"log/slog"
 	"os"
 	"time"
@@ -47,7 +46,6 @@ func initApp(args []string, outfile io.Writer) {
 		EnvVars:     []string{"SEC_TPL_CONFIG"},
 		Value:       "",
 		Destination: &config,
-		Required:    true,
 	}
 	outputFlag := cli.StringFlag{
 		Name:        "output",
@@ -65,7 +63,7 @@ func initApp(args []string, outfile io.Writer) {
 				&outputFlag,
 				&cli.StringFlag{
 					Name:        "secret-file",
-					Value:       fmt.Sprintf("%s/test/local-file-secret.json", workdir),
+					Value:       fmt.Sprintf("%s/local-file-secret.json", workdir),
 					Destination: &secretFile,
 				},
 				&cli.StringFlag{
@@ -146,23 +144,26 @@ func initApp(args []string, outfile io.Writer) {
 		&outputFlag,
 	}
 	app.Action = func(c *cli.Context) error {
+		if _, err := os.Stat(config); os.IsNotExist(err) {
+			return cli.Exit(fmt.Sprintf("Config file not found: %s", config), 1)
+		}
 		cfg := helpers.ParseConfig(config)
 		connector := connectors.NewConnector(cfg)
 		filename := c.Args().First()
 		file, err := os.Open(filename)
 		if err != nil {
-			log.Fatalf("Error on open input file %s", filename)
+			return cli.Exit(fmt.Sprintf("Error on open input file %s", filename), 1)
 		}
 		outputFile := c.App.Writer
 		if output != "" && output != "-" {
 			outputFile, err = os.Create(output)
 			if err != nil {
-				log.Fatalf("Error on open output file %s", filename)
+				return cli.Exit(fmt.Sprintf("Error on open output file %s", filename), 1)
 			}
 		}
 		err = render.ParseFile(file, connector, outputFile)
 		if err != nil {
-			slog.Error(err.Error())
+			return cli.Exit(err.Error(), 1)
 		}
 
 		return nil
