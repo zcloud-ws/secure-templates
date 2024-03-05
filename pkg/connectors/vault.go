@@ -47,7 +47,7 @@ func (v *VaultConnector) Init(secTplConfig config.SecureTemplateConfig) error {
 }
 
 func (v *VaultConnector) Secret(secretName, keyName string) string {
-	kvSecret := v.kvSecrets[keyName]
+	kvSecret := v.kvSecrets[secretName]
 	if kvSecret == nil {
 		kvSec, err := v.client.KVv2(v.engineName).Get(context.Background(), fmt.Sprintf("%s/%s", v.ns, secretName))
 		if err != nil {
@@ -66,7 +66,7 @@ func (v *VaultConnector) Secret(secretName, keyName string) string {
 	return value
 }
 
-func (v *VaultConnector) WriteKey(secretName, keyName, keyValue string) error {
+func (v *VaultConnector) WriteKey(_, _, _ string) error {
 	return errors.New("not implemented for Vault")
 }
 
