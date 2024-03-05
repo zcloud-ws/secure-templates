@@ -2,4 +2,4 @@
 set -e
 
 ./destroy.sh || true
-./start.sh
+./start-and-init.sh
