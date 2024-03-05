@@ -1,4 +1,4 @@
 export APP_USER=dev_user
 export APP_PASSWORD=2dabe3d7c66fb75f751202fdab19266b
-export CLIENT_APP_USER=dev_user
-export CLIENT_APP_PASSWORD=2dabe3d7c66fb75f751202fdab19266b
+export CLIENT_APP_USER=dev_client
+export CLIENT_APP_PASSWORD=6550a7838720e7904d72cae076ceea83
