@@ -72,7 +72,7 @@ USAGE:
 OPTIONS:
    --output value, -o value, --out value   [$SEC_TPL_OUTPUT]
    --secret-file value                    (default: "./test/local-file-secret.json")
-   --gpg-passphrase value                  [$GPG_PASSPHRASE]
+   --private-key-passphrase value         [$LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE]
    --help, -h                             show help
 2024/03/03 00:46:34 ERROR Required flag "config" not set
 ```
@@ -80,7 +80,7 @@ OPTIONS:
 #### Environment variables
 
 - `SEC_TPL_OUTPUT`: Path to output config file.
-- `GPG_PASSPHRASE`: Passphrase to encrypt private key.
+- `LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE`: Passphrase to encrypt private key.
 
 ### local-secret
 
@@ -116,7 +116,8 @@ OPTIONS:
 
 #### Environment variables
 
-- `GPG_PASSPHRASE`: Passphrase to decrypt private key.
+- `LOCAL_SECRET_PRIVATE_KEY`: Private key encoded with base64.
+- `LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE`: Passphrase to decrypt private key.
 
 ### Template Render
 
@@ -163,7 +164,9 @@ GLOBAL OPTIONS:
 
 - `SEC_TPL_CONFIG`: Path to config file.
 - `SEC_TPL_OUTPUT`: Path to output template file.
-- `GPG_PASSPHRASE`: Passphrase to decrypt private key. Used only for `local-secret` engine.
+- `VAULT_TOKEN`: Vault token to call the Vault API.
+- `LOCAL_SECRET_PRIVATE_KEY`: Private key encoded with base64. Used only for `local-secret` engine.
+- `LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE`: Passphrase to decrypt private key. Used only for `local-secret` engine.
 
 ## Template Functions
 

@@ -14,15 +14,15 @@ const (
 )
 
 type SecureTemplateConfig struct {
-	SecretEngine      SecretEngine      `json:"secret_engine"`
-	VaultConfig       VaultConfig       `json:"vault_config,omitempty"`
-	OnePasswordConfig OnePasswordConfig `json:"one_password_config,omitempty"`
-	LocalFileConfig   LocalFileConfig   `json:"local_file_config,omitempty"`
+	SecretEngine SecretEngine `json:"secret_engine"`
+	VaultConfig  VaultConfig  `json:"vault_config,omitempty"`
+	//OnePasswordConfig OnePasswordConfig `json:"one_password_config,omitempty"`
+	LocalFileConfig LocalFileConfig `json:"local_file_config,omitempty"`
 }
 
 type VaultConfig struct {
 	Address      string `json:"address"`
-	Token        string `json:"token"`
+	Token        string `json:"token,omitempty"`
 	SecretEngine string `json:"secret_engine,omitempty"`
 	Namespace    string `json:"ns,omitempty"`
 }

@@ -23,9 +23,10 @@ type LocalFileConnector struct {
 func (v *LocalFileConnector) Init(secTplConfig config.SecureTemplateConfig) error {
 	v.secretFile = secTplConfig.LocalFileConfig.Filename
 	v.secrets = map[string]map[string]string{}
-	if secTplConfig.LocalFileConfig.EncPrivKey != "" {
-		passphrase := helpers.GetEnv("GPG_PASSPHRASE", secTplConfig.LocalFileConfig.Passphrase)
-		privKey, err := helpers.ParseRsaPrivateKeyFromPemStr(secTplConfig.LocalFileConfig.EncPrivKey, passphrase)
+	encPrivKey := helpers.GetEnv("LOCAL_SECRET_PRIVATE_KEY", secTplConfig.LocalFileConfig.EncPrivKey)
+	if encPrivKey != "" {
+		passphrase := helpers.GetEnv("LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE", secTplConfig.LocalFileConfig.Passphrase)
+		privKey, err := helpers.ParseRsaPrivateKeyFromPemStr(encPrivKey, passphrase)
 		if err != nil {
 			return err
 		}

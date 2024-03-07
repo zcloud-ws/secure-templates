@@ -67,8 +67,8 @@ func initApp(args []string, outfile io.Writer) {
 					Destination: &secretFile,
 				},
 				&cli.StringFlag{
-					Name:        "gpg-passphrase",
-					EnvVars:     []string{"GPG_PASSPHRASE"},
+					Name:        "private-key-passphrase",
+					EnvVars:     []string{"LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE"},
 					Value:       "",
 					Destination: &passphrase,
 				},
