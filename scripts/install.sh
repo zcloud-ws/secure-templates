@@ -1,10 +1,11 @@
 #!/usr/bin/env sh
 
-export INSTALL_VERSION=${INSTALL_VERSION:-"v0.0.1-alpha.5"}
+export INSTALL_VERSION=${INSTALL_VERSION:-"v0.0.1-alpha.6"}
 export INSTALL_OS=${INSTALL_OS}
 export INSTALL_ARCH=${INSTALL_ARCH}
 export INSTALL_DEST_DIR=${INSTALL_DEST_DIR}
 export INSTALL_EXT=""
+export INSTALL_ALIAS_NAME=${INSTALL_ALIAS_NAME:-"stpl"}
 
 if [ "$INSTALL_DEST_DIR" != "" ]; then
   INSTALL_DEST_DIR="${INSTALL_DEST_DIR}/"
@@ -75,3 +76,12 @@ export DOWNLOAD_LINK="https://github.com/edimarlnx/secure-templates/releases/dow
 echo "Download from: $DOWNLOAD_LINK"
 echo "Install to: $INSTALL_DEST_DIR"
 curl -sL "$DOWNLOAD_LINK" | tar -xz -C "$INSTALL_DEST_DIR" secure-templates
+
+_destination_file="${INSTALL_DEST_DIR}/secure-templates"
+if [ "${INSTALL_ALIAS_NAME}" != "" ] && [ -x "${_destination_file}" ]; then
+  alias_to="${INSTALL_DEST_DIR}/${INSTALL_ALIAS_NAME}"
+  if [ ! -f "${alias_to}" ]; then
+    ln -s "${_destination_file}" "${alias_to}"
+  fi
+  echo "Install alias to: $alias_to"
+fi
