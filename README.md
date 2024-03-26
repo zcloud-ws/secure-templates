@@ -176,7 +176,7 @@ GLOBAL OPTIONS:
 * `base64Encode`: Encode a base 64 string,
 * `base64Decode`: Decode a base 64 string,
 * `env`: Get environment variable,
-* `secret`: Get key value from a secret engine
+* `secret`: Get the Key value of a secret engine. If the key name is not provided, it returns a key and value map that can be iterated.
 * `toUpper`: Convert string to upper case
 * `toLower`: Convert string to lower case
 * `trimSpace`: Trim string spaces
