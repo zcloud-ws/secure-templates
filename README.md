@@ -82,14 +82,14 @@ OPTIONS:
 - `SEC_TPL_OUTPUT`: Path to output config file.
 - `LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE`: Passphrase to encrypt private key.
 
-### local-secret
+### menage-secret
 
-Manage local file secret engine
+Manage secret engine
 
 Create or update the key `app_passwd` into secret `core` with value `abc123`
 
 ```shell
-secure-templates local-secret put core app_passwd abc123
+secure-templates menage-secret put core app_passwd abc123
 ```
 
 #### Subcommands arguments
@@ -100,10 +100,10 @@ secure-templates local-secret put core app_passwd abc123
 
 ```text
 NAME:
-   secure-templates local-secret - Manipulate local secret file
+   secure-templates menage-secret - Manage secret
 
 USAGE:
-   secure-templates local-secret command [command options] 
+   secure-templates menage-secret command [command options] 
 
 COMMANDS:
    put      Add or update key value
@@ -149,13 +149,14 @@ DESCRIPTION:
    Secure Templates is a tool to render templates using go-templates and load data values from secrets engine.
 
 COMMANDS:
-   init-config   Init empty config
-   local-secret  Manage local secret file
-   help, h       Shows a list of commands or help for one command
+   init-config    Init a sample config
+   menage-secret  Manage secret
+   help, h        Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --config value, -c value, --cfg value   [$SEC_TPL_CONFIG]
    --output value, -o value, --out value   [$SEC_TPL_OUTPUT]
+   --print-keys, -p                       (default: false)
    --help, -h                             show help
    --version, -v                          print the version
 ```

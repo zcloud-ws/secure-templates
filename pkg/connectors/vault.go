@@ -66,8 +66,15 @@ func (v *VaultConnector) Secret(secretName, keyName string) string {
 	return value
 }
 
-func (v *VaultConnector) WriteKey(_, _, _ string) error {
-	return errors.New("not implemented for Vault")
+func (v *VaultConnector) WriteKey(secretName, keyName, keyValue string) error {
+	secretPath := fmt.Sprintf("%s/%s", v.ns, secretName)
+	data := map[string]interface{}{keyName: keyValue}
+	_, err := v.client.KVv2(v.engineName).Patch(context.Background(), secretPath, data)
+	if err != nil {
+		log.Fatalf("unable to write secret: %v", err)
+		return err
+	}
+	return nil
 }
 
 func (v *VaultConnector) Finalize() {

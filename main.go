@@ -106,8 +106,8 @@ func initApp(args []string, outfile io.Writer) {
 			},
 		},
 		{
-			Name:  "local-secret",
-			Usage: "Manage local secret file",
+			Name:  "menage-secret",
+			Usage: "Manage secret",
 			Flags: []cli.Flag{
 				&configFlag,
 			},
@@ -123,9 +123,6 @@ func initApp(args []string, outfile io.Writer) {
 							return cli.Exit("Required secret, key and value args", 1)
 						}
 						cfg := helpers.ParseConfig(config)
-						if cfg.SecretEngine != config2.SecretEngineLocalFile {
-							return cli.Exit("local-secret command requires local-file as secret engine.", 1)
-						}
 						connector := connectors.NewConnector(cfg)
 						secret := cCtx.Args().Get(0)
 						key := cCtx.Args().Get(1)
