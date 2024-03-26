@@ -8,18 +8,20 @@ import (
 	"testing"
 )
 
+type testData struct {
+	name            string
+	args            []string
+	requiredStrings []string
+	envs            map[string]string
+}
+
 func Test_initApp(t *testing.T) {
 	workdir, err := os.Getwd()
 	if err != nil {
 		workdir = os.TempDir()
 	}
 	configFile := "test/local-file-cfg-test.json"
-	tests := []struct {
-		name            string
-		args            []string
-		requiredStrings []string
-		envs            map[string]string
-	}{
+	tests := []testData{
 		{
 			name: "init-config",
 			args: []string{
@@ -106,6 +108,22 @@ func Test_initApp(t *testing.T) {
 			},
 		},
 		{
+			name: "update secrets from .env file",
+			args: []string{
+				"secure-templates",
+				"manage-secret",
+				"import",
+				"test",
+				"test/secrets.env",
+			},
+			requiredStrings: []string{
+				"8 keys saved on secret",
+			},
+			envs: map[string]string{
+				"SEC_TPL_CONFIG": configFile,
+			},
+		},
+		{
 			name: "Env file",
 			args: []string{
 				"secure-templates",
@@ -154,6 +172,28 @@ func Test_initApp(t *testing.T) {
 				"core.app_passwd",
 				"client.app_user",
 				"client.app_passwd",
+			},
+			envs: map[string]string{
+				"SEC_TPL_CONFIG":   configFile,
+				"SECRET_NAME":      "st-secret",
+				"SECRET_NAMESPACE": "dev-ns",
+			},
+		},
+		{
+			name: "Imported secrets from env file",
+			args: []string{
+				"secure-templates",
+				"test/samples/secrets.env",
+			},
+			requiredStrings: []string{
+				"app1_secret=12345",
+				"app2_secret=67890",
+				"app3_secret=\"12345\"",
+				"app4_secret=\"67\\\"8\\\"90\"",
+				"app5_secret='67890'",
+				"app6_secret='\"67890\"'",
+				"app7_secret=678`90",
+				"app8_secret=áçõ",
 			},
 			envs: map[string]string{
 				"SEC_TPL_CONFIG":   configFile,

@@ -30,3 +30,7 @@ func (v *PrintKeysConnector) Finalize() {
 func (v *PrintKeysConnector) WriteKey(_, _, _ string) error {
 	return errors.New("not implemented for Print Keys")
 }
+
+func (v *PrintKeysConnector) WriteKeys(_ string, _ map[string]string) error {
+	return errors.New("not implemented for Print Keys")
+}

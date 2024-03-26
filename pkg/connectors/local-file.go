@@ -61,16 +61,22 @@ func (v *LocalFileConnector) Finalize() {
 }
 
 func (v *LocalFileConnector) WriteKey(secretName, keyName, keyValue string) error {
+	return v.WriteKeys(secretName, map[string]string{keyName: keyValue})
+}
+
+func (v *LocalFileConnector) WriteKeys(secretName string, keyValue map[string]string) error {
 	secret := v.secrets[secretName]
 	if secret == nil {
 		v.secrets[secretName] = map[string]string{}
 		secret = v.secrets[secretName]
 	}
-	encData, err := v.encrypt(keyValue)
-	if err != nil {
-		return err
+	for key, value := range keyValue {
+		encData, err := v.encrypt(value)
+		if err != nil {
+			return err
+		}
+		secret[key] = encData
 	}
-	secret[keyName] = encData
 	return v.saveToFile()
 }
 

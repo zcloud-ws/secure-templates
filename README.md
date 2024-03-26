@@ -95,6 +95,7 @@ secure-templates manage-secret put core app_passwd abc123
 #### Subcommands arguments
 
 - `put`: `SECRET` `KEY` `VALUE`
+- `import`: `SECRET` `ENV FILE`
 
 #### Options
 
@@ -107,10 +108,11 @@ USAGE:
 
 COMMANDS:
    put      Add or update key value
+   import   Add or update key value using env file
    help, h  Shows a list of commands or help for one command
 
 OPTIONS:
-   --config value, -c value, --cfg value  (default: "test/local-file-cfg.json") [$SEC_TPL_CONFIG]
+   --config value, -c value, --cfg value   [$SEC_TPL_CONFIG]
    --help, -h                             show help
 ```
 

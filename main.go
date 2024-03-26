@@ -134,6 +134,31 @@ func initApp(args []string, outfile io.Writer) {
 						return err
 					},
 				},
+				{
+					Name:      "import",
+					Usage:     "Add or update key value using env file",
+					UsageText: "import filepath",
+					ArgsUsage: "[import and filepath]",
+					Args:      true,
+					Action: func(cCtx *cli.Context) error {
+						if len(cCtx.Args().Slice()) < 2 {
+							return cli.Exit("Required filename and secret args", 1)
+						}
+						envFile := cCtx.Args().Get(1)
+						data, err := helpers.ParseEnvFileAsKeyValue(envFile)
+						if err != nil {
+							return cli.Exit(err.Error(), 1)
+						}
+						cfg := helpers.ParseConfig(config)
+						connector := connectors.NewConnector(cfg)
+						secret := cCtx.Args().Get(0)
+						err = connector.WriteKeys(secret, data)
+						if err == nil {
+							cCtx.App.Writer.Write([]byte(fmt.Sprintf("%d keys saved on secret '%s'\n", len(data), secret)))
+						}
+						return err
+					},
+				},
 			},
 		},
 	}

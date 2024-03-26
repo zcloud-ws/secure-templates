@@ -67,8 +67,15 @@ func (v *VaultConnector) Secret(secretName, keyName string) string {
 }
 
 func (v *VaultConnector) WriteKey(secretName, keyName, keyValue string) error {
+	return v.WriteKeys(secretName, map[string]string{keyName: keyValue})
+}
+
+func (v *VaultConnector) WriteKeys(secretName string, keyValue map[string]string) error {
 	secretPath := fmt.Sprintf("%s/%s", v.ns, secretName)
-	data := map[string]interface{}{keyName: keyValue}
+	var data map[string]interface{}
+	for key, value := range keyValue {
+		data[key] = value
+	}
 	_, err := v.client.KVv2(v.engineName).Patch(context.Background(), secretPath, data)
 	if err != nil {
 		log.Fatalf("unable to write secret: %v", err)
