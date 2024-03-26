@@ -15,7 +15,7 @@ func (v *PrintKeysConnector) Init(_ config.SecureTemplateConfig) error {
 	return nil
 }
 
-func (v *PrintKeysConnector) Secret(secretName, keyName string) string {
+func (v *PrintKeysConnector) Secret(secretName, keyName string) any {
 	key := fmt.Sprintf("%s.%s", secretName, keyName)
 	if v.Keys[key] == 0 {
 		v.Keys[key] = 1

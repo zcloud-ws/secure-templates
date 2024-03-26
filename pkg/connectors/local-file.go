@@ -36,22 +36,33 @@ func (v *LocalFileConnector) Init(secTplConfig config.SecureTemplateConfig) erro
 	return v.loadFromFile()
 }
 
-func (v *LocalFileConnector) Secret(secretName, keyName string) string {
+func (v *LocalFileConnector) Secret(secretName, keyName string) any {
 	secret := v.secrets[secretName]
 	if secret == nil {
 		log.Fatalf("secret not exists '%s'", secretName)
 		return keyName
 	}
-	value, ok := secret[keyName]
-	if !ok {
-		log.Fatalf("unable to load value for key %s", keyName)
-		return keyName
+	if keyName != "" {
+		value, ok := secret[keyName]
+		if !ok {
+			log.Fatalf("unable to load value for key %s", keyName)
+			return keyName
+		}
+		encData, err := v.decrypt(value)
+		if err != nil {
+			log.Fatalf("unable to decrypt value for key %s", keyName)
+		}
+		return encData
 	}
-	encData, err := v.decrypt(value)
-	if err != nil {
-		log.Fatalf("unable to decrypt value for key %s", keyName)
+	data := map[string]interface{}{}
+	for k, vl := range secret {
+		encData, err := v.decrypt(vl)
+		if err != nil {
+			log.Fatalf("unable to decrypt value for key %s", keyName)
+		}
+		data[k] = encData
 	}
-	return encData
+	return data
 }
 
 func (v *LocalFileConnector) Finalize() {

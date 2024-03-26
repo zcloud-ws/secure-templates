@@ -46,7 +46,7 @@ func (v *VaultConnector) Init(secTplConfig config.SecureTemplateConfig) error {
 	return nil
 }
 
-func (v *VaultConnector) Secret(secretName, keyName string) string {
+func (v *VaultConnector) Secret(secretName, keyName string) any {
 	kvSecret := v.kvSecrets[secretName]
 	if kvSecret == nil {
 		kvSec, err := v.client.KVv2(v.engineName).Get(context.Background(), fmt.Sprintf("%s/%s", v.ns, secretName))
@@ -54,16 +54,22 @@ func (v *VaultConnector) Secret(secretName, keyName string) string {
 			log.Fatalf("unable to read secret: %v", err)
 			return keyName
 		}
-		v.kvSecrets[keyName] = kvSec
+		v.kvSecrets[secretName] = kvSec
 		kvSecret = kvSec
 	}
-
-	value, ok := kvSecret.Data[keyName].(string)
-	if !ok {
-		log.Fatalf("unable to load value for key %s", keyName)
-		return keyName
+	if keyName != "" {
+		value, ok := kvSecret.Data[keyName].(string)
+		if !ok {
+			log.Fatalf("unable to load value for key %s", keyName)
+			return keyName
+		}
+		return value
 	}
-	return value
+	data := map[string]interface{}{}
+	for k, vl := range kvSecret.Data {
+		data[k] = vl
+	}
+	return data
 }
 
 func (v *VaultConnector) WriteKey(secretName, keyName, keyValue string) error {

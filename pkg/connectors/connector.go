@@ -7,7 +7,7 @@ import (
 
 type Connector interface {
 	Init(secTplConfig config.SecureTemplateConfig) error
-	Secret(secretName, keyName string) string
+	Secret(secretName, keyName string) any
 	WriteKey(secretName, keyName, keyValue string) error
 	WriteKeys(secretName string, keyValue map[string]string) error
 	Finalize()

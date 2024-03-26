@@ -7,9 +7,12 @@ import (
 	"log"
 )
 
-func RegisterSecret(connector connectors.Connector) func(secretName, keyName string) string {
-	return func(secretName, keyName string) string {
-		return connector.Secret(secretName, keyName)
+func RegisterSecret(connector connectors.Connector) func(args ...string) any {
+	return func(args ...string) any {
+		if len(args) == 1 {
+			return connector.Secret(args[0], "")
+		}
+		return connector.Secret(args[0], args[1])
 	}
 }
 

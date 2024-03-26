@@ -201,6 +201,28 @@ func Test_initApp(t *testing.T) {
 				"SECRET_NAMESPACE": "dev-ns",
 			},
 		},
+		{
+			name: "Use secret range values",
+			args: []string{
+				"secure-templates",
+				"test/samples/secrets-list.env",
+			},
+			requiredStrings: []string{
+				"app1_secret:12345",
+				"app2_secret:67890",
+				"app3_secret:\"12345\"",
+				"app4_secret:\"67\\\"8\\\"90\"",
+				"app5_secret:'67890'",
+				"app6_secret:'\"67890\"'",
+				"app7_secret:678`90",
+				"app8_secret:áçõ",
+			},
+			envs: map[string]string{
+				"SEC_TPL_CONFIG":   configFile,
+				"SECRET_NAME":      "st-secret",
+				"SECRET_NAMESPACE": "dev-ns",
+			},
+		},
 	}
 
 	for _, tt := range tests {
