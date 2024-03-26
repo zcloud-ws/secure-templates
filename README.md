@@ -82,14 +82,14 @@ OPTIONS:
 - `SEC_TPL_OUTPUT`: Path to output config file.
 - `LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE`: Passphrase to encrypt private key.
 
-### menage-secret
+### manage-secret
 
 Manage secret engine
 
 Create or update the key `app_passwd` into secret `core` with value `abc123`
 
 ```shell
-secure-templates menage-secret put core app_passwd abc123
+secure-templates manage-secret put core app_passwd abc123
 ```
 
 #### Subcommands arguments
@@ -100,10 +100,10 @@ secure-templates menage-secret put core app_passwd abc123
 
 ```text
 NAME:
-   secure-templates menage-secret - Manage secret
+   secure-templates manage-secret - Manage secret
 
 USAGE:
-   secure-templates menage-secret command [command options] 
+   secure-templates manage-secret command [command options] 
 
 COMMANDS:
    put      Add or update key value
@@ -150,7 +150,7 @@ DESCRIPTION:
 
 COMMANDS:
    init-config    Init a sample config
-   menage-secret  Manage secret
+   manage-secret  Manage secret
    help, h        Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:

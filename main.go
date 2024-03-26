@@ -106,7 +106,7 @@ func initApp(args []string, outfile io.Writer) {
 			},
 		},
 		{
-			Name:  "menage-secret",
+			Name:  "manage-secret",
 			Usage: "Manage secret",
 			Flags: []cli.Flag{
 				&configFlag,

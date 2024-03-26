@@ -41,7 +41,7 @@ func Test_initApp(t *testing.T) {
 			name: "put app user",
 			args: []string{
 				"secure-templates",
-				"local-secret",
+				"manage-secret",
 				"put",
 				"core",
 				"app_user",
@@ -58,7 +58,7 @@ func Test_initApp(t *testing.T) {
 			name: "put app passwd",
 			args: []string{
 				"secure-templates",
-				"local-secret",
+				"manage-secret",
 				"put",
 				"core",
 				"app_passwd",
@@ -75,7 +75,7 @@ func Test_initApp(t *testing.T) {
 			name: "put client app user",
 			args: []string{
 				"secure-templates",
-				"local-secret",
+				"manage-secret",
 				"put",
 				"client",
 				"app_user",
@@ -92,7 +92,7 @@ func Test_initApp(t *testing.T) {
 			name: "put client app passwd",
 			args: []string{
 				"secure-templates",
-				"local-secret",
+				"manage-secret",
 				"put",
 				"client",
 				"app_passwd",
