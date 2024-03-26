@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-export INSTALL_VERSION=${INSTALL_VERSION:-"v0.0.1-alpha.6"}
+export INSTALL_VERSION=${INSTALL_VERSION:-"v0.0.1-alpha.7"}
 export INSTALL_OS=${INSTALL_OS}
 export INSTALL_ARCH=${INSTALL_ARCH}
 export INSTALL_DEST_DIR=${INSTALL_DEST_DIR}
