@@ -37,6 +37,7 @@ func initApp(args []string, outfile io.Writer) {
 	app.Version = appVersion
 	app.EnableBashCompletion = true
 	var config, output, secretFile, passphrase string
+	var printKeys bool
 	if outfile != nil {
 		app.Writer = outfile
 	}
@@ -142,13 +143,28 @@ func initApp(args []string, outfile io.Writer) {
 	app.Flags = []cli.Flag{
 		&configFlag,
 		&outputFlag,
+		&cli.BoolFlag{
+			Name:        "print-keys",
+			Aliases:     []string{"p"},
+			Value:       false,
+			Destination: &printKeys,
+		},
 	}
 	app.Action = func(c *cli.Context) error {
-		if _, err := os.Stat(config); os.IsNotExist(err) {
-			return cli.Exit(fmt.Sprintf("Config file not found: %s", config), 1)
+		var connector connectors.Connector
+		var printKeysValues map[string]int
+		if printKeys {
+			printKeysValues = map[string]int{}
+			connector = &connectors.PrintKeysConnector{
+				Keys: printKeysValues,
+			}
+		} else {
+			if _, err := os.Stat(config); os.IsNotExist(err) {
+				return cli.Exit(fmt.Sprintf("Config file not found: %s", config), 1)
+			}
+			cfg := helpers.ParseConfig(config)
+			connector = connectors.NewConnector(cfg)
 		}
-		cfg := helpers.ParseConfig(config)
-		connector := connectors.NewConnector(cfg)
 		filename := c.Args().First()
 		file, err := os.Open(filename)
 		if err != nil {
@@ -161,11 +177,32 @@ func initApp(args []string, outfile io.Writer) {
 				return cli.Exit(fmt.Sprintf("Error on open output file %s", filename), 1)
 			}
 		}
-		err = render.ParseFile(file, connector, outputFile)
-		if err != nil {
-			return cli.Exit(err.Error(), 1)
-		}
+		if printKeys {
+			nullOutput, err := os.Create(os.DevNull)
+			if err != nil {
+				return cli.Exit("Error on open output file /dev/null", 1)
+			}
+			err = render.ParseFile(file, connector, nullOutput)
+			if err != nil {
+				return cli.Exit(err.Error(), 1)
+			}
+			_, err = outputFile.Write([]byte("Template keys:\n"))
+			if err != nil {
+				return cli.Exit(err.Error(), 1)
+			}
+			for key, _ := range printKeysValues {
+				_, err := outputFile.Write([]byte("  " + key + "\n"))
+				if err != nil {
+					return cli.Exit(err.Error(), 1)
+				}
+			}
 
+		} else {
+			err := render.ParseFile(file, connector, outputFile)
+			if err != nil {
+				return cli.Exit(err.Error(), 1)
+			}
+		}
 		return nil
 	}
 	appArgs := args

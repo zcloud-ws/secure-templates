@@ -10,6 +10,7 @@ type SecretEngine string
 const (
 	SecretEngineVault       SecretEngine = "vault"
 	SecretEngineLocalFile   SecretEngine = "local-file"
+	SecretEnginePrintKeys   SecretEngine = "print-keys"
 	SecretEngineOnePassword SecretEngine = "one-password"
 )
 

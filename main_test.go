@@ -141,6 +141,26 @@ func Test_initApp(t *testing.T) {
 				"SECRET_NAMESPACE": "dev-ns",
 			},
 		},
+		{
+			name: "k8s secret yaml - print keys",
+			args: []string{
+				"secure-templates",
+				"-print-keys",
+				"test/samples/k8s-secret.yaml",
+			},
+			requiredStrings: []string{
+				"Template keys:",
+				"core.app_user",
+				"core.app_passwd",
+				"client.app_user",
+				"client.app_passwd",
+			},
+			envs: map[string]string{
+				"SEC_TPL_CONFIG":   configFile,
+				"SECRET_NAME":      "st-secret",
+				"SECRET_NAMESPACE": "dev-ns",
+			},
+		},
 	}
 
 	for _, tt := range tests {
