@@ -22,8 +22,8 @@ user_generate_totp_secret() {
   method_name="${1}"
   username="${2}"
   user_token="${3:-"$VAULT_USER_TOKEN"}"
-  if [ "${username}" = "" ] || [ "${password}" = "" ] || [ "${user_token}" = "" ]; then
-    echo "Required args 3 arguments: method_name password user_token"
+  if [ "${username}" = "" ] || [ "${username}" = "" ] || [ "${user_token}" = "" ]; then
+    echo "Required args 3 arguments: method_name username user_token"
     return 1
   fi
   METHOD_ID="$(method_id_from_name "${method_name}")"
