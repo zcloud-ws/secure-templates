@@ -6,9 +6,6 @@ method_id_from_name() {
 entity_id_from_name() {
   vault read -field=id "/identity/entity/name/$1" | cat
 }
-entity_ids_in_group_name() {
-  vault read -field=member_entity_ids "/identity/group/name/$1" | sed 's/\]\|\[//g'
-}
 
 enable_kv2() {
   kv_name="${1:-kv}"
@@ -138,31 +135,6 @@ generate_user_token() {
     return 1
   fi
   vault login -method=userpass -token-only username="${username}" password="${password}" | cat
-}
-
-user_update_password() {
-  username="${1}"
-  password="${2}"
-  user_token="${3:-"$VAULT_USER_TOKEN"}"
-  if [ "${username}" = "" ] || [ "${password}" = "" ] || [ "${user_token}" = "" ]; then
-    echo "Required args 3 arguments: username password user_token"
-    return 1
-  fi
-  vault write -header="X-Vault-Token=$user_token" "auth/userpass/users/${username}/password" password="$password"
-}
-
-user_generate_totp_secret() {
-  method_name="${1}"
-  username="${2}"
-  user_token="${3:-"$VAULT_USER_TOKEN"}"
-  if [ "${username}" = "" ] || [ "${password}" = "" ] || [ "${user_token}" = "" ]; then
-    echo "Required args 3 arguments: method_name password user_token"
-    return 1
-  fi
-  METHOD_ID="$(method_id_from_name "${method_name}")"
-  ENTITY_ID="$(entity_id_from_name "${username}")"
-  vault write -header="X-Vault-Token=$user_token" -field=url "/identity/mfa/method/totp/generate" \
-    method_id="${METHOD_ID}" entity_id="${ENTITY_ID}" | cat
 }
 
 
