@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"bufio"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -9,8 +8,8 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
-	"fmt"
 	"github.com/edimarlnx/secure-templates/pkg/config"
+	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"strings"
@@ -84,22 +83,9 @@ func ParseRsaPrivateKeyFromPemStr(privKeyBase64, pwd string) (*rsa.PrivateKey, e
 }
 
 func ParseEnvFileAsKeyValue(envFile string) (map[string]string, error) {
-	file, err := os.Open(envFile)
+	data, err := godotenv.Read(envFile)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, errors.New(fmt.Sprintf("Env file not found: %s", envFile))
-		}
 		return nil, err
-	}
-	buf := bufio.NewScanner(file)
-	data := map[string]string{}
-	for buf.Scan() {
-		line := strings.TrimSpace(buf.Text())
-		key, value, found := strings.Cut(line, "=")
-		if value == "" || key == "" || !found {
-			continue
-		}
-		data[key] = value
 	}
 	return data, nil
 }

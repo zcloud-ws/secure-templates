@@ -78,7 +78,7 @@ func (v *VaultConnector) WriteKey(secretName, keyName, keyValue string) error {
 
 func (v *VaultConnector) WriteKeys(secretName string, keyValue map[string]string) error {
 	secretPath := fmt.Sprintf("%s/%s", v.ns, secretName)
-	var data map[string]interface{}
+	data := map[string]interface{}{}
 	for key, value := range keyValue {
 		data[key] = value
 	}
