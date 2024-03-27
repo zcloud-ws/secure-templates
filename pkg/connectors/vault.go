@@ -82,7 +82,16 @@ func (v *VaultConnector) WriteKeys(secretName string, keyValue map[string]string
 	for key, value := range keyValue {
 		data[key] = value
 	}
-	_, err := v.client.KVv2(v.engineName).Patch(context.Background(), secretPath, data)
+	secret, err := v.client.Logical().ReadWithContext(context.Background(), fmt.Sprintf("%s/data/%s", v.engineName, secretPath))
+	if err != nil {
+		log.Fatalf("unable to get secret: %v", err)
+		return err
+	}
+	if secret == nil {
+		_, err = v.client.KVv2(v.engineName).Put(context.Background(), secretPath, data)
+	} else {
+		_, err = v.client.KVv2(v.engineName).Patch(context.Background(), secretPath, data)
+	}
 	if err != nil {
 		log.Fatalf("unable to write secret: %v", err)
 		return err
