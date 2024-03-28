@@ -3,6 +3,7 @@
 method_id_from_name() {
   vault list -format=table -detailed "/identity/mfa/method/totp" | grep "  ${1}" | cut -d" " -f1 | cat
 }
+
 entity_id_from_name() {
   vault read -field=id "/identity/entity/name/$1" | cat
 }
@@ -137,4 +138,62 @@ generate_user_token() {
   vault login -method=userpass -token-only username="${username}" password="${password}" | cat
 }
 
+show_user_pwd_otp_help() {
+  username="${1}"
+  user_token="${2}"
+  ttl="${3}"
+  if [ "${username}" = "" ] || [ "${user_token}" = "" ] || [ "${ttl}" = "" ]; then
+    echo "Required args 2 arguments: username user_token ttl"
+    return 1
+  fi
+cat <<EOL
+============================== User setup instructions ==============================
+Username: $username
+User token (valid for $ttl): $user_token
+Update password and create TOTP secret using docker container:
 
+Start Vault CLI container:
+---
+docker run --rm -it --name vault-cli \
+  -w /scripts \
+  -e VAULT_ADDR="${VAULT_ADDR}" \
+  hashicorp/vault:1.15 sh
+---
+
+Execute the following commands on opened container shell:
+---
+. <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh)
+user_update_password USERNAME NEW_PASSWORD USER_TOKEN
+user_generate_totp_secret METHOD_NAME USERNAME USER_TOKEN
+---
+
+================================= END =================================
+EOL
+
+}
+
+
+create_or_reset_user() {
+  totp_name="${1}"
+  username="${2}"
+  user_pass="${3}"
+  user_policies="${4}"
+  user_token_setup_ttl="${5}"
+  if [ "${totp_name}" = "" ] || [ "${username}" = "" ] || [ "${user_pass}" = "" ] || [ "${user_policies}" = "" ]  || [ "${user_token_setup_ttl}" = "" ]; then
+    echo "Required args 5 arguments: totp_name username user_pass user_policies user_token_setup_ttl"
+    return 1
+  fi
+  # Create User and password with access policies
+  create_user "$username" "$user_pass" "$user_policies"
+
+  # Delete Login enforcement on TOTP for entity
+  create_login_enforcement_entity "$totp_name" "$username" delete
+
+  # Create user token
+  USER_TOKEN_TEMP="$(generate_user_token "$username" "$user_pass" "$user_token_setup_ttl")"
+
+  # Create Login enforcement on TOTP for entity
+  create_login_enforcement_entity "$totp_name" "$username"
+
+  show_user_pwd_otp_help "$username" "$USER_TOKEN_TEMP" "$user_token_setup_ttl"
+}
