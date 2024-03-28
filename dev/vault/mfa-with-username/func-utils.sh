@@ -145,7 +145,7 @@ show_user_pwd_otp_help() {
   user_token="${3}"
   ttl="${4}"
   if [ "${username}" = "" ] || [ "${method_name}" = "" ] || [ "${user_token}" = "" ] || [ "${ttl}" = "" ]; then
-    echo "Required args 2 arguments: username method_name user_token ttl"
+    echo "Required args 4 arguments: username method_name user_token ttl"
     return 1
   fi
   METHOD_ID="$(method_id_from_name "${method_name}")"
@@ -191,11 +191,13 @@ create_or_reset_user() {
   # Delete Login enforcement on TOTP for entity
   create_login_enforcement_entity "$totp_name" "$username" delete
 
+  destroy_totp_secret "$totp_name" "$username"
+
   # Create user token
   USER_TOKEN_TEMP="$(generate_user_token "$username" "$user_pass" "$user_token_setup_ttl")"
 
   # Create Login enforcement on TOTP for entity
   create_login_enforcement_entity "$totp_name" "$username"
 
-  show_user_pwd_otp_help "$username" "$USER_TOKEN_TEMP" "$user_token_setup_ttl"
+  show_user_pwd_otp_help "$username" "$totp_name" "$USER_TOKEN_TEMP" "$user_token_setup_ttl"
 }

@@ -25,7 +25,7 @@ user_generate_totp_secret() {
   fi
   ENTITY_ID="$(VAULT_TOKEN="$user_token" entity_id_from_name "${username}")"
   VAULT_TOKEN="$user_token" vault write -field=url "/identity/mfa/method/totp/generate" \
-    method_id="${method_id}" entity_id="${ENTITY_ID}" | cat
+    method_id="${method_id}" entity_id="${ENTITY_ID}"
 }
 
 

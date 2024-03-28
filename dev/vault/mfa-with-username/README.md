@@ -97,6 +97,18 @@ Require 'john' to use TOTP during login.
 create_login_enforcement_entity totp john
 ```
 
+### Create or reset user, create temporary token and enforce MFA
+
+* totp_name
+* username
+* user_pass
+* user_policies
+* user_token_setup_ttl
+
+```shell
+create_or_reset_user totp john userpwd123 staging_read,default 24h
+```
+
 
 ## User Setup
 
