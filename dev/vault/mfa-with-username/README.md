@@ -68,6 +68,40 @@ Enable the TOTP engine with name `totp` and issuer name `MyOrg`
 create_mfa_totp totp MyOrg
 ```
 
+### Create or reset user, create temporary token and enforce MFA
+
+* totp_name
+* username
+* user_pass
+* user_policies
+* user_token_setup_ttl
+
+```shell
+create_or_reset_user totp john userpwd123 staging_read,default 24h
+```
+
+## User Setup
+
+Start a Vault CLI Container
+
+```shell
+docker run --rm -it --name vault-cli \
+  -e VAULT_ADDR="${VAULT_ADDR}" \
+  hashicorp/vault:1.15 sh
+```
+
+Update Password and Generate TOTP Secret
+
+```shell
+. <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh)
+user_update_password USER_TOKEN USERNAME NEW_PASSWORD
+user_generate_totp_secret USER_TOKEN METHOD_NAME USERNAME
+```
+
+**Security Note:** Review the contents of [`user-func-utils.sh`](https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh) for transparency.
+
+## Additional Administrator Tasks (Optional)
+
 ### Create a User with KV Access
 
 * Create a user named 'john'.
@@ -96,41 +130,6 @@ Require 'john' to use TOTP during login.
 ```shell
 create_login_enforcement_entity totp john
 ```
-
-### Create or reset user, create temporary token and enforce MFA
-
-* totp_name
-* username
-* user_pass
-* user_policies
-* user_token_setup_ttl
-
-```shell
-create_or_reset_user totp john userpwd123 staging_read,default 24h
-```
-
-
-## User Setup
-
-Start a Vault CLI Container
-
-```shell
-docker run --rm -it --name vault-cli \
-  -e VAULT_ADDR="${VAULT_ADDR}" \
-  hashicorp/vault:1.15 sh
-```
-
-Update Password and Generate TOTP Secret
-
-```shell
-. <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh)
-user_update_password USER_TOKEN USERNAME NEW_PASSWORD
-user_generate_totp_secret USER_TOKEN METHOD_NAME USERNAME
-```
-
-**Security Note:** Review the contents of [`user-func-utils.sh`](https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh) for transparency.
-
-## Additional Administrator Tasks (Optional)
 
 ### Disable MFA for a User (if needed)
 
