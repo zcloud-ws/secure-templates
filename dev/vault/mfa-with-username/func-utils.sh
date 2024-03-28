@@ -19,13 +19,14 @@ enable_auth_userpass() {
 
 create_auth_acl() {
   vault policy write "auth_totp" - <<EOF
-# Allow tokens to look up their own properties
 path "/identity/mfa/method/totp/generate" {
     capabilities = ["create", "read", "update"]
 }
-# Allow tokens to look up their own properties
 path "auth/userpass/users/{{identity.entity.name}}/password" {
     capabilities = ["create", "update"]
+}
+path "identity/entity/name/{{identity.entity.name}}" {
+    capabilities = ["read"]
 }
 EOF
 }
@@ -140,12 +141,14 @@ generate_user_token() {
 
 show_user_pwd_otp_help() {
   username="${1}"
-  user_token="${2}"
-  ttl="${3}"
-  if [ "${username}" = "" ] || [ "${user_token}" = "" ] || [ "${ttl}" = "" ]; then
-    echo "Required args 2 arguments: username user_token ttl"
+  method_name="${2}"
+  user_token="${3}"
+  ttl="${4}"
+  if [ "${username}" = "" ] || [ "${method_name}" = "" ] || [ "${user_token}" = "" ] || [ "${ttl}" = "" ]; then
+    echo "Required args 2 arguments: username method_name user_token ttl"
     return 1
   fi
+  METHOD_ID="$(method_id_from_name "${method_name}")"
 cat <<EOL
 ============================== User setup instructions ==============================
 Username: $username
@@ -154,17 +157,16 @@ Update password and create TOTP secret using docker container:
 
 Start Vault CLI container:
 ---
-docker run --rm -it --name vault-cli \
-  -w /scripts \
-  -e VAULT_ADDR="${VAULT_ADDR}" \
+docker run --rm -it --name vault-cli \\
+  -e VAULT_ADDR="${VAULT_ADDR}" \\
   hashicorp/vault:1.15 sh
 ---
 
 Execute the following commands on opened container shell:
 ---
 . <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh)
-user_update_password USERNAME NEW_PASSWORD USER_TOKEN
-user_generate_totp_secret METHOD_NAME USERNAME USER_TOKEN
+user_update_password $user_token $username NEW_PASSWORD
+user_generate_totp_secret $user_token ${METHOD_ID} $username
 ---
 
 ================================= END =================================

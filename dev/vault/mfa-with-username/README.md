@@ -27,7 +27,7 @@ docker run --rm -it --name vault-cli \
 . <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/func-utils.sh)
 ```
 
-**Security Note:** Review the contents of [`user-func-utils.sh`](https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh) for transparency.
+**Security Note:** Review the contents of [`user-func-utils.sh`](https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/func-utils.sh) for transparency.
 
 
 ### Enable the userpass Auth Method
@@ -104,7 +104,6 @@ Start a Vault CLI Container
 
 ```shell
 docker run --rm -it --name vault-cli \
-  -w /scripts \
   -e VAULT_ADDR="${VAULT_ADDR}" \
   hashicorp/vault:1.15 sh
 ```
@@ -113,15 +112,11 @@ Update Password and Generate TOTP Secret
 
 ```shell
 . <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh)
-user_update_password USERNAME NEW_PASSWORD USER_TOKEN
-user_generate_totp_secret METHOD_NAME USERNAME USER_TOKEN
+user_update_password USER_TOKEN USERNAME NEW_PASSWORD
+user_generate_totp_secret USER_TOKEN METHOD_NAME USERNAME
 ```
 
 **Security Note:** Review the contents of [`user-func-utils.sh`](https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh) for transparency.
-
-
-For security reason, you can check the content of scripts loaded from this
-step [here](https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh)
 
 ## Additional Administrator Tasks (Optional)
 
