@@ -149,27 +149,34 @@ show_user_pwd_otp_help() {
     return 1
   fi
   METHOD_ID="$(method_id_from_name "${method_name}")"
-cat <<EOL
-============================== User setup instructions ==============================
-Username: $username
-User token (valid for $ttl): $user_token
-Update password and create TOTP secret using docker container:
 
-Start Vault CLI container:
----
+cat <<EOL
+# User setup instructions
+
+\`\`\`
+Username: $username
+User token \(valid for $ttl\): $user_token
+\`\`\`
+
+## Update password and create TOTP secret using docker container:
+
+### Start Vault CLI container:
+\`\`\`
 docker run --rm -it --name vault-cli \\
   -e VAULT_ADDR="${VAULT_ADDR}" \\
   hashicorp/vault:1.15 sh
----
+\`\`\`
 
-Execute the following commands on opened container shell:
----
-. <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/dev/vault/mfa-with-username/user-func-utils.sh)
+### Execute the following commands on opened container shell:
+
+\`\`\`
+. <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/vault/user-func-utils.sh)
+
 user_update_password $user_token $username NEW_PASSWORD
-user_generate_totp_secret $user_token ${METHOD_ID} $username
----
 
-================================= END =================================
+user_generate_totp_secret $user_token ${METHOD_ID} $username
+\`\`\`
+
 EOL
 
 }
