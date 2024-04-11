@@ -1,24 +1,22 @@
 package render
 
 import (
+	"github.com/Masterminds/sprig/v3"
 	"github.com/edimarlnx/secure-templates/pkg/connectors"
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 	"text/template"
 )
 
 func funcMap(connector connectors.Connector) template.FuncMap {
-	return template.FuncMap{
-		"base64Encode": Base64Encode,
-		"base64Decode": Base64Decode,
-		"env":          EnvVar,
-		"secret":       RegisterSecret(connector),
-		"toUpper":      strings.ToUpper,
-		"toLower":      strings.ToLower,
-		"trimSpace":    strings.TrimSpace,
+	funcMaps := template.FuncMap{}
+	for k, v := range sprig.FuncMap() {
+		funcMaps[k] = v
 	}
+	funcMaps["env"] = EnvVar
+	funcMaps["secret"] = RegisterSecret(connector)
+	return funcMaps
 }
 
 func ParseFile(file *os.File, connector connectors.Connector, output io.Writer) error {
