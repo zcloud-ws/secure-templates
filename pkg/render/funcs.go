@@ -1,6 +1,7 @@
 package render
 
 import (
+	"github.com/edimarlnx/secure-templates/pkg/config"
 	"github.com/edimarlnx/secure-templates/pkg/connectors"
 	"github.com/edimarlnx/secure-templates/pkg/helpers"
 )
@@ -14,6 +15,11 @@ func RegisterSecret(connector connectors.Connector) func(args ...string) any {
 	}
 }
 
-func EnvVar(envName string) string {
-	return helpers.GetEnv(envName, envName)
+func RegisterEnvVar(cfgOptions config.SecureTemplateConfigOptions) func(string) string {
+	return func(envName string) string {
+		if cfgOptions.EnvShowNameAsValueIfEmpty {
+			return helpers.GetEnv(envName, envName)
+		}
+		return helpers.GetEnv(envName, "")
+	}
 }

@@ -14,10 +14,12 @@ import (
 
 type LocalFileConnector struct {
 	Connector
-	secretFile string
-	secrets    map[string]map[string]string
-	encPrivKey *rsa.PrivateKey
-	encPubKey  *rsa.PublicKey
+	secretFile                   string
+	secrets                      map[string]map[string]string
+	encPrivKey                   *rsa.PrivateKey
+	encPubKey                    *rsa.PublicKey
+	secretIgnoreNotFoundKey      bool
+	secretShowNameAsValueIfEmpty bool
 }
 
 func (v *LocalFileConnector) Init(secTplConfig config.SecureTemplateConfig) error {
@@ -33,6 +35,8 @@ func (v *LocalFileConnector) Init(secTplConfig config.SecureTemplateConfig) erro
 		v.encPrivKey = privKey
 		v.encPubKey = &privKey.PublicKey
 	}
+	v.secretShowNameAsValueIfEmpty = secTplConfig.Options.SecretShowNameAsValueIfEmpty
+	v.secretIgnoreNotFoundKey = secTplConfig.Options.SecretIgnoreNotFoundKey
 	return v.loadFromFile()
 }
 
@@ -45,8 +49,14 @@ func (v *LocalFileConnector) Secret(secretName, keyName string) any {
 	if keyName != "" {
 		value, ok := secret[keyName]
 		if !ok {
-			log.Fatalf("unable to load value for key %s", keyName)
-			return keyName
+			if !v.secretIgnoreNotFoundKey {
+				log.Fatalf("unable to load value for key %s", keyName)
+			}
+			log.Printf("unable to load value for key %s", keyName)
+			if v.secretShowNameAsValueIfEmpty {
+				return keyName
+			}
+			return value
 		}
 		encData, err := v.decrypt(value)
 		if err != nil {

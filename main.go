@@ -30,6 +30,7 @@ func initApp(args []string, outfile io.Writer) {
 	if err != nil {
 		workdir = os.TempDir()
 	}
+	var cfg config2.SecureTemplateConfig
 	app := cli.NewApp()
 	app.Name = appName
 	app.Description = "Secure Templates is a tool to render templates using go-templates and load data values from secrets engine."
@@ -184,7 +185,7 @@ func initApp(args []string, outfile io.Writer) {
 			if _, err := os.Stat(config); os.IsNotExist(err) {
 				return cli.Exit(fmt.Sprintf("Config file not found: %s", config), 1)
 			}
-			cfg := helpers.ParseConfig(config)
+			cfg = helpers.ParseConfig(config)
 			connector = connectors.NewConnector(cfg)
 		}
 		filename := c.Args().First()
@@ -204,7 +205,7 @@ func initApp(args []string, outfile io.Writer) {
 			if err != nil {
 				return cli.Exit("Error on open output file /dev/null", 1)
 			}
-			err = render.ParseFile(file, connector, nullOutput)
+			err = render.ParseFile(cfg.Options, file, connector, nullOutput)
 			if err != nil {
 				return cli.Exit(err.Error(), 1)
 			}
@@ -220,7 +221,7 @@ func initApp(args []string, outfile io.Writer) {
 			}
 
 		} else {
-			err := render.ParseFile(file, connector, outputFile)
+			err := render.ParseFile(cfg.Options, file, connector, outputFile)
 			if err != nil {
 				return cli.Exit(err.Error(), 1)
 			}

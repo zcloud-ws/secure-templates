@@ -14,11 +14,18 @@ const (
 	SecretEngineOnePassword SecretEngine = "one-password"
 )
 
+type SecureTemplateConfigOptions struct {
+	SecretShowNameAsValueIfEmpty bool `json:"secretShowNameAsValueIfEmpty"`
+	SecretIgnoreNotFoundKey      bool `json:"secretIgnoreNotFoundKey"`
+	EnvShowNameAsValueIfEmpty    bool `json:"envShowNameAsValueIfEmpty"`
+}
+
 type SecureTemplateConfig struct {
 	SecretEngine SecretEngine `json:"secret_engine"`
 	VaultConfig  VaultConfig  `json:"vault_config,omitempty"`
 	//OnePasswordConfig OnePasswordConfig `json:"one_password_config,omitempty"`
-	LocalFileConfig LocalFileConfig `json:"local_file_config,omitempty"`
+	LocalFileConfig LocalFileConfig             `json:"local_file_config,omitempty"`
+	Options         SecureTemplateConfigOptions `json:"options"`
 }
 
 type VaultConfig struct {

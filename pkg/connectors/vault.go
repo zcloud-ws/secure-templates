@@ -13,10 +13,12 @@ import (
 
 type VaultConnector struct {
 	Connector
-	client     *vApi.Client
-	engineName string
-	ns         string
-	kvSecrets  map[string]*vApi.KVSecret
+	client                       *vApi.Client
+	engineName                   string
+	ns                           string
+	kvSecrets                    map[string]*vApi.KVSecret
+	secretIgnoreNotFoundKey      bool
+	secretShowNameAsValueIfEmpty bool
 }
 
 func (v *VaultConnector) Init(secTplConfig config.SecureTemplateConfig) error {
@@ -43,6 +45,8 @@ func (v *VaultConnector) Init(secTplConfig config.SecureTemplateConfig) error {
 		v.ns = "dev"
 	}
 	v.kvSecrets = map[string]*vApi.KVSecret{}
+	v.secretShowNameAsValueIfEmpty = secTplConfig.Options.SecretShowNameAsValueIfEmpty
+	v.secretIgnoreNotFoundKey = secTplConfig.Options.SecretIgnoreNotFoundKey
 	return nil
 }
 
@@ -60,8 +64,13 @@ func (v *VaultConnector) Secret(secretName, keyName string) any {
 	if keyName != "" {
 		value, ok := kvSecret.Data[keyName].(string)
 		if !ok {
-			log.Fatalf("unable to load value for key %s", keyName)
-			return keyName
+			if !v.secretIgnoreNotFoundKey {
+				log.Fatalf("unable to load value for key %s", keyName)
+			}
+			log.Printf("unable to load value for key %s", keyName)
+			if v.secretShowNameAsValueIfEmpty {
+				return keyName
+			}
 		}
 		return value
 	}
