@@ -41,9 +41,6 @@ func (v *VaultConnector) Init(secTplConfig config.SecureTemplateConfig) error {
 		v.engineName = "kv"
 	}
 	v.ns = helpers.GetEnv("VAULT_NS", secTplConfig.VaultConfig.Namespace)
-	if v.ns == "" {
-		v.ns = "dev"
-	}
 	v.kvSecrets = map[string]*vApi.KVSecret{}
 	v.secretShowNameAsValueIfEmpty = secTplConfig.Options.SecretShowNameAsValueIfEmpty
 	v.secretIgnoreNotFoundKey = secTplConfig.Options.SecretIgnoreNotFoundKey
@@ -53,7 +50,13 @@ func (v *VaultConnector) Init(secTplConfig config.SecureTemplateConfig) error {
 func (v *VaultConnector) Secret(secretName, keyName string) any {
 	kvSecret := v.kvSecrets[secretName]
 	if kvSecret == nil {
-		kvSec, err := v.client.KVv2(v.engineName).Get(context.Background(), fmt.Sprintf("%s/%s", v.ns, secretName))
+		var mountPath string
+		if v.ns != "" {
+			mountPath = fmt.Sprintf("%s/%s", v.ns, secretName)
+		} else {
+			mountPath = secretName
+		}
+		kvSec, err := v.client.KVv2(v.engineName).Get(context.Background(), mountPath)
 		if err != nil {
 			log.Fatalf("unable to read secret: %v", err)
 			return keyName
@@ -86,7 +89,12 @@ func (v *VaultConnector) WriteKey(secretName, keyName, keyValue string) error {
 }
 
 func (v *VaultConnector) WriteKeys(secretName string, keyValue map[string]string) error {
-	secretPath := fmt.Sprintf("%s/%s", v.ns, secretName)
+	var secretPath string
+	if v.ns != "" {
+		secretPath = fmt.Sprintf("%s/%s", v.ns, secretName)
+	} else {
+		secretPath = secretName
+	}
 	data := map[string]interface{}{}
 	for key, value := range keyValue {
 		data[key] = value
