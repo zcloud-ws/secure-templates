@@ -8,7 +8,7 @@ go tool cover -func coverage/cover.out | grep total | awk '{print \$3}' > covera
 "
 
 if [ "$RUN_IN_DOCKER" = "true" ]; then
-docker run --rm -it --name stpl-coverage -u $UID \
+docker run --rm -i --name stpl-coverage --restart no -u $UID \
   -v "$PWD":/source \
   -e GOCACHE=/tmp/.cache \
   -w /source \
