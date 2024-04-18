@@ -1,7 +1,7 @@
-go: downloading golang.org/x/vuln v1.0.4
-go: downloading golang.org/x/mod v0.14.0
-go: downloading golang.org/x/tools v0.17.0
-go: downloading golang.org/x/sync v0.6.0
-Scanning your code and 203 packages across 35 dependent modules for known vulnerabilities...
+go: downloading golang.org/x/vuln v1.1.0
+go: downloading golang.org/x/mod v0.17.0
+go: downloading golang.org/x/tools v0.20.0
+go: downloading golang.org/x/sync v0.7.0
+Scanning your code and 203 packages across 36 dependent modules for known vulnerabilities...
 
 No vulnerabilities found.
