@@ -1,5 +1,5 @@
-[![Coverage](https://img.shields.io/badge/Coverage-60%25-orange)](coverage/cover.html)
 # Secure Templates
+[![Coverage](https://img.shields.io/badge/Coverage-60%25-orange)](coverage/cover.html)
 
 Secure Templates is a tool to render templates using go-templates and load data values from secrets engine.
 
