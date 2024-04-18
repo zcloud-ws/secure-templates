@@ -35,6 +35,7 @@ func initApp(args []string, outfile io.Writer) {
 	}
 	var cfg config2.SecureTemplateConfig
 	app := cli.NewApp()
+	logging.Log.SetOutput(app.Writer)
 	app.Name = appName
 	app.Description = "Secure Templates is a tool to render templates using go-templates and load data values from secrets engine."
 	app.Usage = appUsage
@@ -82,7 +83,11 @@ func initApp(args []string, outfile io.Writer) {
 				if passphrase == "" {
 					passphrase = fmt.Sprintf("%x", md5.Sum([]byte(time.Now().String())))
 				}
-				privateKey, err := helpers.GenRsaPrivateKey(passphrase)
+				var privateKey []byte
+				privateKey, err = helpers.GenRsaPrivateKey(passphrase)
+				if err != nil {
+					return err
+				}
 				cfg := config2.SecureTemplateConfig{
 					SecretEngine: config2.SecretEngineLocalFile,
 					LocalFileConfig: config2.LocalFileConfig{
@@ -133,7 +138,7 @@ func initApp(args []string, outfile io.Writer) {
 						value := cCtx.Args().Get(2)
 						err := connector.WriteKey(secret, key, value)
 						if err == nil {
-							cCtx.App.Writer.Write([]byte(fmt.Sprintf("Key '%s' saved on secret '%s'\n", key, secret)))
+							logging.Log.Infof("Key '%s' saved on secret '%s'\n", key, secret)
 						}
 						return err
 					},
@@ -158,7 +163,7 @@ func initApp(args []string, outfile io.Writer) {
 						secret := cCtx.Args().Get(0)
 						err = connector.WriteKeys(secret, data)
 						if err == nil {
-							cCtx.App.Writer.Write([]byte(fmt.Sprintf("%d keys saved on secret '%s'\n", len(data), secret)))
+							logging.Log.Infof("%d keys saved on secret '%s'\n", len(data), secret)
 						}
 						return err
 					},
@@ -222,7 +227,7 @@ func initApp(args []string, outfile io.Writer) {
 			if err != nil {
 				return cli.Exit(err.Error(), 1)
 			}
-			for key, _ := range printKeysValues {
+			for key := range printKeysValues {
 				_, err := outputFile.Write([]byte("  " + key + "\n"))
 				if err != nil {
 					return cli.Exit(err.Error(), 1)
