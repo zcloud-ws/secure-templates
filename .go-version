@@ -1,0 +1,3 @@
+export STPL_GO_VERSION
+STPL_GO_VERSION="$(grep -E '^go [[:digit:]]+.[[:digit:]]+.[[:digit:]]+' go.mod | cut -d" " -f2)"
+
