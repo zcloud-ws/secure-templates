@@ -25,17 +25,16 @@ var (
 )
 
 func main() {
-	initApp(os.Args, nil)
+	initApp(os.Args, nil, nil)
 }
 
-func initApp(args []string, outfile io.Writer) {
+func initApp(args []string, outfile, errOutfile io.Writer) {
 	workdir, err := os.Getwd()
 	if err != nil {
 		workdir = os.TempDir()
 	}
 	var cfg config2.SecureTemplateConfig
 	app := cli.NewApp()
-	logging.Log.SetOutput(app.Writer)
 	app.Name = appName
 	app.Description = "Secure Templates is a tool to render templates using go-templates and load data values from secrets engine."
 	app.Usage = appUsage
@@ -46,6 +45,18 @@ func initApp(args []string, outfile io.Writer) {
 	if outfile != nil {
 		app.Writer = outfile
 	}
+	if errOutfile != nil {
+		app.ErrWriter = errOutfile
+	}
+	logging.Log.SetOutput(app.Writer)
+	logging.Log.AddHook(&writer.Hook{
+		Writer: app.ErrWriter,
+		LogLevels: []logrus.Level{
+			logrus.WarnLevel,
+			logrus.ErrorLevel,
+			logrus.FatalLevel,
+		},
+	})
 	configFlag := cli.StringFlag{
 		Name:        "config",
 		Aliases:     []string{"c", "cfg"},
@@ -208,12 +219,12 @@ func initApp(args []string, outfile io.Writer) {
 				return cli.Exit(fmt.Sprintf("Error on open output file %s", filename), 1)
 			}
 		}
-		logging.Log.AddHook(&writer.Hook{
-			Writer: c.App.ErrWriter,
-			LogLevels: []logrus.Level{
-				logrus.WarnLevel,
-			},
-		})
+		//logging.Log.AddHook(&writer.Hook{
+		//	Writer: c.App.ErrWriter,
+		//	LogLevels: []logrus.Level{
+		//		logrus.WarnLevel,
+		//	},
+		//})
 		if printKeys {
 			nullOutput, err := os.Create(os.DevNull)
 			if err != nil {
