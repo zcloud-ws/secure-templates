@@ -23,7 +23,7 @@ system.
 
 ## Samples
 
-- [.env](./test/samples/.env): [.rendered-env](./test/samples/.rendered-env) 
+- [.env](./test/samples/.env): [.rendered-env](./test/samples/.rendered-env)
 - [k8s-secret.yaml](./test/samples/k8s-secret.yaml): [k8s-secret-rendered.yaml](./test/samples/k8s-secret-rendered.yaml)
 
 ## Supported Secrets engines
@@ -46,6 +46,13 @@ system.
   "local_file_config": {
     "filename": "test/local-file-secret.json",
     "enc_priv_key": "LS0tLS...."
+  },
+  "options": {
+    "secretShowNameAsValueIfEmpty": false,
+    "secretIgnoreNotFoundKey": false,
+    "envShowNameAsValueIfEmpty": false,
+    "envAllowAccessToSecureTemplateEnvs": false,
+    "envRestrictedNameRegex": "SC_.+"
   }
 }
 ```
@@ -174,8 +181,23 @@ GLOBAL OPTIONS:
 ## Template Functions
 
 * `env`: Get environment variable.
-* `secret`: Get the Key value of a secret engine. If the key name is not provided, it returns a key and value map that can be iterated.
-* `sprig functions`: Visit the [docs](https://masterminds.github.io/sprig/) for a complete list of functions. 
+* `secret`: Get the Key value of a secret engine. If the key name is not provided, it returns a key and value map that
+  can be iterated.
+* `sprig functions`: Visit the [docs](https://masterminds.github.io/sprig/) for a complete list of functions.
+
+## Configuration options
+
+These are configuration options for the Secure Templates tool. Here's a brief explanation for each:
+
+- `secretShowNameAsValueIfEmpty`: If set to true, when a secret key's value is empty, the key's name will be shown as
+  the value.
+- `secretIgnoreNotFoundKey`: If set to true, the tool will ignore if a secret key is not found in the secrets engine.
+- `envShowNameAsValueIfEmpty`: Similar to `secretShowNameAsValueIfEmpty`, but for environment variables. If set to true,
+  when an environment variable's value is empty, the variable's name will be shown as the value.
+- `envAllowAccessToSecureTemplateEnvs`: If set to true, the tool will allow access to secure template environment
+  variables.
+- `envRestrictedNameRegex`: This is a regular expression that defines the naming convention for restricted environment
+  variables. In the provided example, any environment variable starting with "SC_" would be considered restricted.
 
 # Author
 
