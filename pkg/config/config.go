@@ -8,16 +8,18 @@ import (
 type SecretEngine string
 
 const (
-	SecretEngineVault       SecretEngine = "vault"
-	SecretEngineLocalFile   SecretEngine = "local-file"
-	SecretEnginePrintKeys   SecretEngine = "print-keys"
-	SecretEngineOnePassword SecretEngine = "one-password"
+	SecretEngineVault     SecretEngine = "vault"
+	SecretEngineLocalFile SecretEngine = "local-file"
+	SecretEnginePrintKeys SecretEngine = "print-keys"
+	//SecretEngineOnePassword SecretEngine = "one-password"
 )
 
 type SecureTemplateConfigOptions struct {
-	SecretShowNameAsValueIfEmpty bool `json:"secretShowNameAsValueIfEmpty"`
-	SecretIgnoreNotFoundKey      bool `json:"secretIgnoreNotFoundKey"`
-	EnvShowNameAsValueIfEmpty    bool `json:"envShowNameAsValueIfEmpty"`
+	SecretShowNameAsValueIfEmpty       bool   `json:"secretShowNameAsValueIfEmpty"`
+	SecretIgnoreNotFoundKey            bool   `json:"secretIgnoreNotFoundKey"`
+	EnvShowNameAsValueIfEmpty          bool   `json:"envShowNameAsValueIfEmpty"`
+	EnvAllowAccessToSecureTemplateEnvs bool   `json:"envAllowAccessToSecureTemplateEnvs"`
+	EnvRestrictedNameRegex             string `json:"envRestrictedNameRegex"`
 }
 
 type SecureTemplateConfig struct {

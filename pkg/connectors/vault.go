@@ -5,9 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/edimarlnx/secure-templates/pkg/config"
+	"github.com/edimarlnx/secure-templates/pkg/envs"
 	"github.com/edimarlnx/secure-templates/pkg/helpers"
+	"github.com/edimarlnx/secure-templates/pkg/logging"
 	vApi "github.com/hashicorp/vault/api"
-	"log"
 	"strings"
 )
 
@@ -23,24 +24,24 @@ type VaultConnector struct {
 
 func (v *VaultConnector) Init(secTplConfig config.SecureTemplateConfig) error {
 	cfg := vApi.DefaultConfig()
-	cfg.Address = helpers.GetEnv("VAULT_ADDR", secTplConfig.VaultConfig.Address)
+	cfg.Address = helpers.GetEnv(envs.VaultAddrEnv, secTplConfig.VaultConfig.Address)
 	client, err := vApi.NewClient(cfg)
 	if err != nil {
 		msg := fmt.Sprintf("unable to initialize Vault client: %v", err)
 		return errors.New(msg)
 	}
-	token := helpers.GetEnv("VAULT_TOKEN", secTplConfig.VaultConfig.Token)
+	token := helpers.GetEnv(envs.VaultTokenEnv, secTplConfig.VaultConfig.Token)
 	if strings.TrimSpace(token) == "" {
 		msg := "vault token is required"
 		return errors.New(msg)
 	}
 	client.SetToken(token)
 	v.client = client
-	v.engineName = helpers.GetEnv("VAULT_SECRET_ENGINE", secTplConfig.VaultConfig.SecretEngine)
+	v.engineName = helpers.GetEnv(envs.VaultSecretEngineEnv, secTplConfig.VaultConfig.SecretEngine)
 	if v.engineName == "" {
 		v.engineName = "kv"
 	}
-	v.ns = helpers.GetEnv("VAULT_NS", secTplConfig.VaultConfig.Namespace)
+	v.ns = helpers.GetEnv(envs.VaultNsEnv, secTplConfig.VaultConfig.Namespace)
 	v.kvSecrets = map[string]*vApi.KVSecret{}
 	v.secretShowNameAsValueIfEmpty = secTplConfig.Options.SecretShowNameAsValueIfEmpty
 	v.secretIgnoreNotFoundKey = secTplConfig.Options.SecretIgnoreNotFoundKey
@@ -58,7 +59,7 @@ func (v *VaultConnector) Secret(secretName, keyName string) any {
 		}
 		kvSec, err := v.client.KVv2(v.engineName).Get(context.Background(), mountPath)
 		if err != nil {
-			log.Fatalf("unable to read secret: %v", err)
+			logging.Log.Fatalf("unable to read secret: %v\n", err)
 			return keyName
 		}
 		v.kvSecrets[secretName] = kvSec
@@ -68,9 +69,9 @@ func (v *VaultConnector) Secret(secretName, keyName string) any {
 		value, ok := kvSecret.Data[keyName].(string)
 		if !ok {
 			if !v.secretIgnoreNotFoundKey {
-				log.Fatalf("unable to load value for key %s", keyName)
+				logging.Log.Fatalf("unable to load value for key %s\n", keyName)
 			}
-			log.Printf("unable to load value for key %s", keyName)
+			logging.Log.Printf("unable to load value for key %s\n", keyName)
 			if v.secretShowNameAsValueIfEmpty {
 				return keyName
 			}
@@ -101,7 +102,7 @@ func (v *VaultConnector) WriteKeys(secretName string, keyValue map[string]string
 	}
 	secret, err := v.client.Logical().ReadWithContext(context.Background(), fmt.Sprintf("%s/data/%s", v.engineName, secretPath))
 	if err != nil {
-		log.Fatalf("unable to get secret: %v", err)
+		logging.Log.Fatalf("unable to get secret: %v\n", err)
 		return err
 	}
 	if secret == nil {
@@ -110,7 +111,7 @@ func (v *VaultConnector) WriteKeys(secretName string, keyValue map[string]string
 		_, err = v.client.KVv2(v.engineName).Patch(context.Background(), secretPath, data)
 	}
 	if err != nil {
-		log.Fatalf("unable to write secret: %v", err)
+		logging.Log.Fatalf("unable to write secret: %v\n", err)
 		return err
 	}
 	return nil

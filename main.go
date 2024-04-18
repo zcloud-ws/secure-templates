@@ -6,11 +6,14 @@ import (
 	"fmt"
 	config2 "github.com/edimarlnx/secure-templates/pkg/config"
 	"github.com/edimarlnx/secure-templates/pkg/connectors"
+	"github.com/edimarlnx/secure-templates/pkg/envs"
 	"github.com/edimarlnx/secure-templates/pkg/helpers"
+	"github.com/edimarlnx/secure-templates/pkg/logging"
 	"github.com/edimarlnx/secure-templates/pkg/render"
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/writer"
 	"github.com/urfave/cli/v2"
 	"io"
-	"log/slog"
 	"os"
 	"time"
 )
@@ -45,14 +48,14 @@ func initApp(args []string, outfile io.Writer) {
 	configFlag := cli.StringFlag{
 		Name:        "config",
 		Aliases:     []string{"c", "cfg"},
-		EnvVars:     []string{"SEC_TPL_CONFIG"},
+		EnvVars:     []string{envs.SecTplConfigEnv},
 		Value:       "",
 		Destination: &config,
 	}
 	outputFlag := cli.StringFlag{
 		Name:        "output",
 		Aliases:     []string{"o", "out"},
-		EnvVars:     []string{"SEC_TPL_OUTPUT"},
+		EnvVars:     []string{envs.SecTplOutputEnv},
 		Value:       "",
 		Destination: &output,
 	}
@@ -70,7 +73,7 @@ func initApp(args []string, outfile io.Writer) {
 				},
 				&cli.StringFlag{
 					Name:        "private-key-passphrase",
-					EnvVars:     []string{"LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE"},
+					EnvVars:     []string{envs.LocalSecretPrivateKeyPassphraseEnv},
 					Value:       "",
 					Destination: &passphrase,
 				},
@@ -200,6 +203,12 @@ func initApp(args []string, outfile io.Writer) {
 				return cli.Exit(fmt.Sprintf("Error on open output file %s", filename), 1)
 			}
 		}
+		logging.Log.AddHook(&writer.Hook{
+			Writer: c.App.ErrWriter,
+			LogLevels: []logrus.Level{
+				logrus.WarnLevel,
+			},
+		})
 		if printKeys {
 			nullOutput, err := os.Create(os.DevNull)
 			if err != nil {
@@ -233,6 +242,6 @@ func initApp(args []string, outfile io.Writer) {
 		appArgs = append(args, "-h")
 	}
 	if err := app.Run(appArgs); err != nil {
-		slog.Error(err.Error())
+		logging.Log.Error(err.Error())
 	}
 }

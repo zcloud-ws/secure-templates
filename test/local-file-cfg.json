@@ -14,6 +14,8 @@
   "options": {
     "secretShowNameAsValueIfEmpty": false,
     "secretIgnoreNotFoundKey": false,
-    "envShowNameAsValueIfEmpty": false
+    "envShowNameAsValueIfEmpty": false,
+    "envAllowAccessToSecureTemplateEnvs": false,
+    "envRestrictedNameRegex": "SC_.+"
   }
 }

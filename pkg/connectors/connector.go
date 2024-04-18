@@ -2,7 +2,7 @@ package connectors
 
 import (
 	"github.com/edimarlnx/secure-templates/pkg/config"
-	"log"
+	"github.com/edimarlnx/secure-templates/pkg/logging"
 )
 
 type Connector interface {
@@ -23,11 +23,12 @@ func NewConnector(secTplConfig config.SecureTemplateConfig) Connector {
 	case config.SecretEnginePrintKeys:
 		connector = &PrintKeysConnector{}
 	default:
-		log.Fatalf("Connector not implemented: %s", secTplConfig.SecretEngine)
+		logging.Log.Fatalf("Connector not implemented: %s\n", secTplConfig.SecretEngine)
+		return nil
 	}
 	err := connector.Init(secTplConfig)
 	if err != nil {
-		log.Fatalf("Error on init connector: %s", err.Error())
+		logging.Log.Fatalf("Error on init connector: %s\n", err.Error())
 	}
 	return connector
 }

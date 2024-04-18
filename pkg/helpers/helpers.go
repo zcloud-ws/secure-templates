@@ -9,8 +9,8 @@ import (
 	"encoding/pem"
 	"errors"
 	"github.com/edimarlnx/secure-templates/pkg/config"
+	"github.com/edimarlnx/secure-templates/pkg/logging"
 	"github.com/joho/godotenv"
-	"log"
 	"os"
 	"strings"
 )
@@ -26,12 +26,12 @@ func GetEnv(name, defaultValue string) string {
 func ParseConfig(filename string) config.SecureTemplateConfig {
 	data, err := os.ReadFile(filename)
 	if err != nil {
-		log.Fatalf("Error on parse config file: %s", filename)
+		logging.Log.Fatalf("Error on parse config file: %s\n", filename)
 	}
 	var cfg config.SecureTemplateConfig
 	err = json.Unmarshal(data, &cfg)
 	if err != nil {
-		log.Fatalf("Error on parse config file: %s", filename)
+		logging.Log.Fatalf("Error on parse config file: %s\n", filename)
 	}
 	return cfg
 }

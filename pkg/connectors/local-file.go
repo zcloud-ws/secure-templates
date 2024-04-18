@@ -6,9 +6,10 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"github.com/edimarlnx/secure-templates/pkg/config"
+	"github.com/edimarlnx/secure-templates/pkg/envs"
 	"github.com/edimarlnx/secure-templates/pkg/helpers"
+	"github.com/edimarlnx/secure-templates/pkg/logging"
 	"github.com/go-jose/go-jose/v3/json"
-	"log"
 	"os"
 )
 
@@ -25,9 +26,9 @@ type LocalFileConnector struct {
 func (v *LocalFileConnector) Init(secTplConfig config.SecureTemplateConfig) error {
 	v.secretFile = secTplConfig.LocalFileConfig.Filename
 	v.secrets = map[string]map[string]string{}
-	encPrivKey := helpers.GetEnv("LOCAL_SECRET_PRIVATE_KEY", secTplConfig.LocalFileConfig.EncPrivKey)
+	encPrivKey := helpers.GetEnv(envs.LocalSecretPrivateKeyEnv, secTplConfig.LocalFileConfig.EncPrivKey)
 	if encPrivKey != "" {
-		passphrase := helpers.GetEnv("LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE", secTplConfig.LocalFileConfig.Passphrase)
+		passphrase := helpers.GetEnv(envs.LocalSecretPrivateKeyPassphraseEnv, secTplConfig.LocalFileConfig.Passphrase)
 		privKey, err := helpers.ParseRsaPrivateKeyFromPemStr(encPrivKey, passphrase)
 		if err != nil {
 			return err
@@ -43,16 +44,16 @@ func (v *LocalFileConnector) Init(secTplConfig config.SecureTemplateConfig) erro
 func (v *LocalFileConnector) Secret(secretName, keyName string) any {
 	secret := v.secrets[secretName]
 	if secret == nil {
-		log.Fatalf("secret not exists '%s'", secretName)
+		logging.Log.Fatalf("secret not exists '%s'\n", secretName)
 		return keyName
 	}
 	if keyName != "" {
 		value, ok := secret[keyName]
 		if !ok {
 			if !v.secretIgnoreNotFoundKey {
-				log.Fatalf("unable to load value for key %s", keyName)
+				logging.Log.Warnf("unable to load value for key %s\n", keyName)
 			}
-			log.Printf("unable to load value for key %s", keyName)
+			logging.Log.Warnf("unable to load value for key %s\n", keyName)
 			if v.secretShowNameAsValueIfEmpty {
 				return keyName
 			}
@@ -60,7 +61,7 @@ func (v *LocalFileConnector) Secret(secretName, keyName string) any {
 		}
 		encData, err := v.decrypt(value)
 		if err != nil {
-			log.Fatalf("unable to decrypt value for key %s", keyName)
+			logging.Log.Fatalf("unable to decrypt value for key %s\n", keyName)
 		}
 		return encData
 	}
@@ -68,7 +69,7 @@ func (v *LocalFileConnector) Secret(secretName, keyName string) any {
 	for k, vl := range secret {
 		encData, err := v.decrypt(vl)
 		if err != nil {
-			log.Fatalf("unable to decrypt value for key %s", keyName)
+			logging.Log.Fatalf("unable to decrypt value for key %s\n", keyName)
 		}
 		data[k] = encData
 	}
@@ -77,7 +78,7 @@ func (v *LocalFileConnector) Secret(secretName, keyName string) any {
 
 func (v *LocalFileConnector) Finalize() {
 	if err := v.saveToFile(); err != nil {
-		log.Fatal(err)
+		logging.Log.Fatal(err)
 	}
 }
 
