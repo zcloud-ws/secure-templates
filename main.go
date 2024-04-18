@@ -48,10 +48,18 @@ func initApp(args []string, outfile, errOutfile io.Writer) {
 	if errOutfile != nil {
 		app.ErrWriter = errOutfile
 	}
-	logging.Log.SetOutput(app.Writer)
+	logging.Log.AddHook(&writer.Hook{
+		Writer: app.Writer,
+		LogLevels: []logrus.Level{
+			logrus.DebugLevel,
+			logrus.TraceLevel,
+			logrus.InfoLevel,
+		},
+	})
 	logging.Log.AddHook(&writer.Hook{
 		Writer: app.ErrWriter,
 		LogLevels: []logrus.Level{
+			logrus.PanicLevel,
 			logrus.WarnLevel,
 			logrus.ErrorLevel,
 			logrus.FatalLevel,
@@ -219,12 +227,6 @@ func initApp(args []string, outfile, errOutfile io.Writer) {
 				return cli.Exit(fmt.Sprintf("Error on open output file %s", filename), 1)
 			}
 		}
-		//logging.Log.AddHook(&writer.Hook{
-		//	Writer: c.App.ErrWriter,
-		//	LogLevels: []logrus.Level{
-		//		logrus.WarnLevel,
-		//	},
-		//})
 		if printKeys {
 			nullOutput, err := os.Create(os.DevNull)
 			if err != nil {
