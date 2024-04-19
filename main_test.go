@@ -231,11 +231,16 @@ func Test_initApp(t *testing.T) {
 				t.Setenv(key, value)
 			}
 			buf := bytes.Buffer{}
-			initApp(tt.args, &buf)
+			bufErr := bytes.Buffer{}
+			initApp(tt.args, &buf, &bufErr)
 			str := buf.String()
+			strErr := bufErr.String()
 			for _, requiredString := range tt.requiredStrings {
 				if !strings.Contains(str, requiredString) {
 					t.Fatalf("Required '%s' string not found.", requiredString)
+				}
+				if strErr != "" {
+					t.Errorf("Required '%s' string not found.", requiredString)
 				}
 			}
 		})

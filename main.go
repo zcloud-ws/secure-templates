@@ -25,10 +25,10 @@ var (
 )
 
 func main() {
-	initApp(os.Args, nil)
+	initApp(os.Args, nil, nil)
 }
 
-func initApp(args []string, outfile io.Writer) {
+func initApp(args []string, outfile, errOutfile io.Writer) {
 	workdir, err := os.Getwd()
 	if err != nil {
 		workdir = os.TempDir()
@@ -45,6 +45,26 @@ func initApp(args []string, outfile io.Writer) {
 	if outfile != nil {
 		app.Writer = outfile
 	}
+	if errOutfile != nil {
+		app.ErrWriter = errOutfile
+	}
+	logging.Log.AddHook(&writer.Hook{
+		Writer: app.Writer,
+		LogLevels: []logrus.Level{
+			logrus.DebugLevel,
+			logrus.TraceLevel,
+			logrus.InfoLevel,
+		},
+	})
+	logging.Log.AddHook(&writer.Hook{
+		Writer: app.ErrWriter,
+		LogLevels: []logrus.Level{
+			logrus.PanicLevel,
+			logrus.WarnLevel,
+			logrus.ErrorLevel,
+			logrus.FatalLevel,
+		},
+	})
 	configFlag := cli.StringFlag{
 		Name:        "config",
 		Aliases:     []string{"c", "cfg"},
@@ -82,7 +102,11 @@ func initApp(args []string, outfile io.Writer) {
 				if passphrase == "" {
 					passphrase = fmt.Sprintf("%x", md5.Sum([]byte(time.Now().String())))
 				}
-				privateKey, err := helpers.GenRsaPrivateKey(passphrase)
+				var privateKey []byte
+				privateKey, err = helpers.GenRsaPrivateKey(passphrase)
+				if err != nil {
+					return err
+				}
 				cfg := config2.SecureTemplateConfig{
 					SecretEngine: config2.SecretEngineLocalFile,
 					LocalFileConfig: config2.LocalFileConfig{
@@ -133,7 +157,7 @@ func initApp(args []string, outfile io.Writer) {
 						value := cCtx.Args().Get(2)
 						err := connector.WriteKey(secret, key, value)
 						if err == nil {
-							cCtx.App.Writer.Write([]byte(fmt.Sprintf("Key '%s' saved on secret '%s'\n", key, secret)))
+							logging.Log.Infof("Key '%s' saved on secret '%s'\n", key, secret)
 						}
 						return err
 					},
@@ -158,7 +182,7 @@ func initApp(args []string, outfile io.Writer) {
 						secret := cCtx.Args().Get(0)
 						err = connector.WriteKeys(secret, data)
 						if err == nil {
-							cCtx.App.Writer.Write([]byte(fmt.Sprintf("%d keys saved on secret '%s'\n", len(data), secret)))
+							logging.Log.Infof("%d keys saved on secret '%s'\n", len(data), secret)
 						}
 						return err
 					},
@@ -203,12 +227,6 @@ func initApp(args []string, outfile io.Writer) {
 				return cli.Exit(fmt.Sprintf("Error on open output file %s", filename), 1)
 			}
 		}
-		logging.Log.AddHook(&writer.Hook{
-			Writer: c.App.ErrWriter,
-			LogLevels: []logrus.Level{
-				logrus.WarnLevel,
-			},
-		})
 		if printKeys {
 			nullOutput, err := os.Create(os.DevNull)
 			if err != nil {
@@ -222,7 +240,7 @@ func initApp(args []string, outfile io.Writer) {
 			if err != nil {
 				return cli.Exit(err.Error(), 1)
 			}
-			for key, _ := range printKeysValues {
+			for key := range printKeysValues {
 				_, err := outputFile.Write([]byte("  " + key + "\n"))
 				if err != nil {
 					return cli.Exit(err.Error(), 1)
