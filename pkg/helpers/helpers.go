@@ -33,6 +33,7 @@ func ParseConfig(filename string) config.SecureTemplateConfig {
 	if err != nil {
 		logging.Log.Fatalf("Error on parse config file: %s\n", filename)
 	}
+	cfg.ExpandEnvVars()
 	return cfg
 }
 

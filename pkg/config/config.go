@@ -3,6 +3,8 @@ package config
 import (
 	"encoding/json"
 	"io"
+	"os"
+	"strings"
 )
 
 type SecretEngine string
@@ -53,4 +55,29 @@ func (cfg *SecureTemplateConfig) Json(out io.Writer) error {
 	}
 	_, err = out.Write(data)
 	return err
+}
+
+func (cfg *SecureTemplateConfig) ExpandEnvVars() {
+	cfg.VaultConfig.expandEnvVars()
+	cfg.LocalFileConfig.expandEnvVars()
+}
+
+func (vCfg *VaultConfig) expandEnvVars() {
+	vCfg.Address = expandEnvironmentVariables(vCfg.Address)
+	vCfg.Token = expandEnvironmentVariables(vCfg.Token)
+	vCfg.Namespace = expandEnvironmentVariables(vCfg.Namespace)
+	vCfg.SecretEngine = expandEnvironmentVariables(vCfg.SecretEngine)
+}
+
+func (lCfg *LocalFileConfig) expandEnvVars() {
+	lCfg.Filename = expandEnvironmentVariables(lCfg.Filename)
+	lCfg.EncPrivKey = expandEnvironmentVariables(lCfg.EncPrivKey)
+	lCfg.Passphrase = expandEnvironmentVariables(lCfg.Passphrase)
+}
+
+func expandEnvironmentVariables(env string) string {
+	if env == "" || !strings.Contains(env, "$") {
+		return env
+	}
+	return os.ExpandEnv(env)
 }

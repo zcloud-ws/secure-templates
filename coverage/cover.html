@@ -57,7 +57,7 @@
 				
 				<option value="file0">github.com/edimarlnx/secure-templates/main.go (80.8%)</option>
 				
-				<option value="file1">github.com/edimarlnx/secure-templates/pkg/config/config.go (80.0%)</option>
+				<option value="file1">github.com/edimarlnx/secure-templates/pkg/config/config.go (88.2%)</option>
 				
 				<option value="file2">github.com/edimarlnx/secure-templates/pkg/connectors/connector.go (54.5%)</option>
 				
@@ -67,7 +67,7 @@
 				
 				<option value="file5">github.com/edimarlnx/secure-templates/pkg/connectors/vault.go (0.0%)</option>
 				
-				<option value="file6">github.com/edimarlnx/secure-templates/pkg/helpers/helpers.go (76.7%)</option>
+				<option value="file6">github.com/edimarlnx/secure-templates/pkg/helpers/helpers.go (77.3%)</option>
 				
 				<option value="file7">github.com/edimarlnx/secure-templates/pkg/render/funcs.go (61.1%)</option>
 				
@@ -144,10 +144,18 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
         <span class="cov10" title="11">if errOutfile != nil </span><span class="cov10" title="11">{
                 app.ErrWriter = errOutfile
         }</span>
-        <span class="cov10" title="11">logging.Log.SetOutput(app.Writer)
+        <span class="cov10" title="11">logging.Log.AddHook(&amp;writer.Hook{
+                Writer: app.Writer,
+                LogLevels: []logrus.Level{
+                        logrus.DebugLevel,
+                        logrus.TraceLevel,
+                        logrus.InfoLevel,
+                },
+        })
         logging.Log.AddHook(&amp;writer.Hook{
                 Writer: app.ErrWriter,
                 LogLevels: []logrus.Level{
+                        logrus.PanicLevel,
                         logrus.WarnLevel,
                         logrus.ErrorLevel,
                         logrus.FatalLevel,
@@ -315,12 +323,6 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
                                 return cli.Exit(fmt.Sprintf("Error on open output file %s", filename), 1)
                         }</span>
                 }
-                //logging.Log.AddHook(&amp;writer.Hook{
-                //        Writer: c.App.ErrWriter,
-                //        LogLevels: []logrus.Level{
-                //                logrus.WarnLevel,
-                //        },
-                //})
                 <span class="cov7" title="5">if printKeys </span><span class="cov1" title="1">{
                         nullOutput, err := os.Create(os.DevNull)
                         if err != nil </span><span class="cov0" title="0">{
@@ -364,6 +366,8 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
 import (
         "encoding/json"
         "io"
+        "os"
+        "strings"
 )
 
 type SecretEngine string
@@ -407,13 +411,38 @@ type LocalFileConfig struct {
         Passphrase string `json:"passphrase,omitempty"`
 }
 
-func (cfg *SecureTemplateConfig) Json(out io.Writer) error <span class="cov8" title="1">{
+func (cfg *SecureTemplateConfig) Json(out io.Writer) error <span class="cov1" title="1">{
         data, err := json.MarshalIndent(cfg, "", "  ")
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov8" title="1">_, err = out.Write(data)
+        <span class="cov1" title="1">_, err = out.Write(data)
         return err</span>
+}
+
+func (cfg *SecureTemplateConfig) ExpandEnvVars() <span class="cov5" title="9">{
+        cfg.VaultConfig.expandEnvVars()
+        cfg.LocalFileConfig.expandEnvVars()
+}</span>
+
+func (vCfg *VaultConfig) expandEnvVars() <span class="cov5" title="9">{
+        vCfg.Address = expandEnvironmentVariables(vCfg.Address)
+        vCfg.Token = expandEnvironmentVariables(vCfg.Token)
+        vCfg.Namespace = expandEnvironmentVariables(vCfg.Namespace)
+        vCfg.SecretEngine = expandEnvironmentVariables(vCfg.SecretEngine)
+}</span>
+
+func (lCfg *LocalFileConfig) expandEnvVars() <span class="cov5" title="9">{
+        lCfg.Filename = expandEnvironmentVariables(lCfg.Filename)
+        lCfg.EncPrivKey = expandEnvironmentVariables(lCfg.EncPrivKey)
+        lCfg.Passphrase = expandEnvironmentVariables(lCfg.Passphrase)
+}</span>
+
+func expandEnvironmentVariables(env string) string <span class="cov10" title="63">{
+        if env == "" || !strings.Contains(env, "$") </span><span class="cov10" title="63">{
+                return env
+        }</span>
+        <span class="cov0" title="0">return os.ExpandEnv(env)</span>
 }
 </pre>
 		
@@ -813,7 +842,8 @@ func ParseConfig(filename string) config.SecureTemplateConfig <span class="cov7"
         if err != nil </span><span class="cov0" title="0">{
                 logging.Log.Fatalf("Error on parse config file: %s\n", filename)
         }</span>
-        <span class="cov7" title="9">return cfg</span>
+        <span class="cov7" title="9">cfg.ExpandEnvVars()
+        return cfg</span>
 }
 
 func GenRsaPrivateKey(pwd string) ([]byte, error) <span class="cov1" title="1">{
