@@ -23,7 +23,13 @@ func GetEnv(name, defaultValue string) string {
 	return defaultValue
 }
 
-func ParseConfig(filename string) config.SecureTemplateConfig {
+func ParseConfig(filename string, isConfigRequired bool) config.SecureTemplateConfig {
+	if filename == "" && !isConfigRequired {
+		logging.Log.Warnf("Using print key as secret connector.\n")
+		return config.SecureTemplateConfig{
+			SecretEngine: config.SecretEnginePrintKeys,
+		}
+	}
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		logging.Log.Fatalf("Error on parse config file: %s\n", filename)
