@@ -2,8 +2,8 @@ package connectors
 
 import (
 	"errors"
-	"fmt"
 	"github.com/edimarlnx/secure-templates/pkg/config"
+	"strings"
 )
 
 type PrintKeysConnector struct {
@@ -12,11 +12,19 @@ type PrintKeysConnector struct {
 }
 
 func (v *PrintKeysConnector) Init(_ config.SecureTemplateConfig) error {
+	v.Keys = make(map[string]int)
 	return nil
 }
 
 func (v *PrintKeysConnector) Secret(secretName, keyName string) any {
-	key := fmt.Sprintf("%s.%s", secretName, keyName)
+	var keys []string
+	if secretName != "" {
+		keys = append(keys, secretName)
+	}
+	if keyName != "" {
+		keys = append(keys, keyName)
+	}
+	key := strings.Join(keys, ".")
 	if v.Keys[key] == 0 {
 		v.Keys[key] = 1
 	}

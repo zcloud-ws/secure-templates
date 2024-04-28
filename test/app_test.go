@@ -1,47 +1,38 @@
-package main
+package test
 
 import (
-	"bytes"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 )
-
-type testData struct {
-	name            string
-	args            []string
-	requiredStrings []string
-	envs            map[string]string
-}
 
 func Test_initApp(t *testing.T) {
 	workdir, err := os.Getwd()
 	if err != nil {
 		workdir = os.TempDir()
 	}
-	configFile := "test/local-file-cfg-test.json"
-	tests := []testData{
+	configFile := "local-file-cfg-test.json"
+	tests := []DataTest{
 		{
-			name: "init-config",
-			args: []string{
+			Name: "init-config",
+			Args: []string{
 				"secure-templates",
 				"init-config",
 				"-o",
 				configFile,
 				"-secret-file",
-				fmt.Sprintf("%s/test/local-file-secret-test.json", workdir),
+				fmt.Sprintf("%s/local-file-secret-test.json", workdir),
 				"-private-key-passphrase",
 				"test-pwd",
 			},
-			requiredStrings: []string{},
-			envs: map[string]string{
+			RequiredStrings: []string{},
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
-			name: "put app user",
-			args: []string{
+			Name: "put app user",
+			Args: []string{
 				"secure-templates",
 				"manage-secret",
 				"put",
@@ -49,16 +40,16 @@ func Test_initApp(t *testing.T) {
 				"app_user",
 				"dev_user",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"saved on secret",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
-			name: "put app passwd",
-			args: []string{
+			Name: "put app passwd",
+			Args: []string{
 				"secure-templates",
 				"manage-secret",
 				"put",
@@ -66,16 +57,16 @@ func Test_initApp(t *testing.T) {
 				"app_passwd",
 				"2dabe3d7c66fb75f751202fdab19266b",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"saved on secret",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
-			name: "put client app user",
-			args: []string{
+			Name: "put client app user",
+			Args: []string{
 				"secure-templates",
 				"manage-secret",
 				"put",
@@ -83,16 +74,16 @@ func Test_initApp(t *testing.T) {
 				"app_user",
 				"dev_user",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"saved on secret",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
-			name: "put client app passwd",
-			args: []string{
+			Name: "put client app passwd",
+			Args: []string{
 				"secure-templates",
 				"manage-secret",
 				"put",
@@ -100,52 +91,52 @@ func Test_initApp(t *testing.T) {
 				"app_passwd",
 				"2dabe3d7c66fb75f751202fdab19266b",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"saved on secret",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
-			name: "update secrets from .env file",
-			args: []string{
+			Name: "update secrets from .env file",
+			Args: []string{
 				"secure-templates",
 				"manage-secret",
 				"import",
 				"test",
-				"test/secrets.env",
+				"secrets.env",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"8 keys saved on secret",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
-			name: "Env file",
-			args: []string{
+			Name: "Env file",
+			Args: []string{
 				"secure-templates",
-				"test/samples/.env",
+				"samples/.env",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"APP_USER=dev_user",
 				"APP_PASSWORD=2dabe3d7c66fb75f751202fdab19266b",
 				"CLIENT_APP_USER=dev_user",
 				"CLIENT_APP_PASSWORD=2dabe3d7c66fb75f751202fdab19266b",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG": configFile,
 			},
 		},
 		{
-			name: "k8s secret yaml",
-			args: []string{
+			Name: "k8s secret yaml",
+			Args: []string{
 				"secure-templates",
-				"test/samples/k8s-secret.yaml",
+				"samples/k8s-secret.yaml",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"name: st-secret",
 				"namespace: dev-ns",
 				"APP_USER: ZGV2X3VzZXI=",
@@ -153,39 +144,39 @@ func Test_initApp(t *testing.T) {
 				"CLIENT_APP_USER: \"dev_user\"",
 				"CLIENT_APP_PASSWORD: \"2dabe3d7c66fb75f751202fdab19266b\"",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG":   configFile,
 				"SECRET_NAME":      "st-secret",
 				"SECRET_NAMESPACE": "dev-ns",
 			},
 		},
 		{
-			name: "k8s secret yaml - print keys",
-			args: []string{
+			Name: "k8s secret yaml - print keys",
+			Args: []string{
 				"secure-templates",
 				"-print-keys",
-				"test/samples/k8s-secret.yaml",
+				"samples/k8s-secret.yaml",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"Template keys:",
 				"core.app_user",
 				"core.app_passwd",
 				"client.app_user",
 				"client.app_passwd",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG":   configFile,
 				"SECRET_NAME":      "st-secret",
 				"SECRET_NAMESPACE": "dev-ns",
 			},
 		},
 		{
-			name: "Imported secrets from env file",
-			args: []string{
+			Name: "Imported secrets from env file",
+			Args: []string{
 				"secure-templates",
-				"test/samples/secrets.env",
+				"samples/secrets.env",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"app1_secret=12345",
 				"app2_secret=67890",
 				"app3_secret=12345",
@@ -195,19 +186,19 @@ func Test_initApp(t *testing.T) {
 				"app7_secret=678`90",
 				"app8_secret=áçõ",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG":   configFile,
 				"SECRET_NAME":      "st-secret",
 				"SECRET_NAMESPACE": "dev-ns",
 			},
 		},
 		{
-			name: "Use secret range values",
-			args: []string{
+			Name: "Use secret range values",
+			Args: []string{
 				"secure-templates",
-				"test/samples/secrets-list.env",
+				"samples/secrets-list.env",
 			},
-			requiredStrings: []string{
+			RequiredStrings: []string{
 				"app1_secret:12345",
 				"app2_secret:67890",
 				"app3_secret:12345",
@@ -217,7 +208,7 @@ func Test_initApp(t *testing.T) {
 				"app7_secret:678`90",
 				"app8_secret:áçõ",
 			},
-			envs: map[string]string{
+			Envs: map[string]string{
 				"SEC_TPL_CONFIG":   configFile,
 				"SECRET_NAME":      "st-secret",
 				"SECRET_NAMESPACE": "dev-ns",
@@ -225,24 +216,5 @@ func Test_initApp(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			for key, value := range tt.envs {
-				t.Setenv(key, value)
-			}
-			buf := bytes.Buffer{}
-			bufErr := bytes.Buffer{}
-			initApp(tt.args, &buf, &bufErr)
-			str := buf.String()
-			strErr := bufErr.String()
-			for _, requiredString := range tt.requiredStrings {
-				if !strings.Contains(str, requiredString) {
-					t.Fatalf("Required '%s' string not found.", requiredString)
-				}
-				if strErr != "" {
-					t.Errorf("Required '%s' string not found.", requiredString)
-				}
-			}
-		})
-	}
+	SuiteTest(t, configFile, tests)
 }

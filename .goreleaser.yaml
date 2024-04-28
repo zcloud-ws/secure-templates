@@ -13,7 +13,7 @@ builds:
       - windows
       - darwin
     ldflags:
-      - -s -w -X main.appVersion={{.Version}}
+      - -s -w -X app.appVersion={{.Version}}
 archives:
   - format: tar.gz
     # this name render makes the OS and Arch compatible with the results of `uname`.
