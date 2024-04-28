@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>secure-templates: Go Coverage Report</title>
+		<title>app: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,23 +55,25 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/edimarlnx/secure-templates/main.go (80.8%)</option>
+				<option value="file0">github.com/edimarlnx/secure-templates/pkg/app/app.go (82.2%)</option>
 				
 				<option value="file1">github.com/edimarlnx/secure-templates/pkg/config/config.go (88.2%)</option>
 				
-				<option value="file2">github.com/edimarlnx/secure-templates/pkg/connectors/connector.go (54.5%)</option>
+				<option value="file2">github.com/edimarlnx/secure-templates/pkg/connectors/connector.go (63.6%)</option>
 				
 				<option value="file3">github.com/edimarlnx/secure-templates/pkg/connectors/local-file.go (67.9%)</option>
 				
-				<option value="file4">github.com/edimarlnx/secure-templates/pkg/connectors/print-keys.go (57.1%)</option>
+				<option value="file4">github.com/edimarlnx/secure-templates/pkg/connectors/print-keys.go (84.6%)</option>
 				
 				<option value="file5">github.com/edimarlnx/secure-templates/pkg/connectors/vault.go (0.0%)</option>
 				
-				<option value="file6">github.com/edimarlnx/secure-templates/pkg/helpers/helpers.go (77.3%)</option>
+				<option value="file6">github.com/edimarlnx/secure-templates/pkg/helpers/helpers.go (78.7%)</option>
 				
 				<option value="file7">github.com/edimarlnx/secure-templates/pkg/render/funcs.go (61.1%)</option>
 				
 				<option value="file8">github.com/edimarlnx/secure-templates/pkg/render/template.go (85.7%)</option>
+				
+				<option value="file9">github.com/edimarlnx/secure-templates/test/test_setup.go (86.7%)</option>
 				
 				</select>
 			</div>
@@ -94,13 +96,13 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package main
+		<pre class="file" id="file0" style="display: none">package app
 
 import (
         "crypto/md5"
         "encoding/base64"
         "fmt"
-        config2 "github.com/edimarlnx/secure-templates/pkg/config"
+        "github.com/edimarlnx/secure-templates/pkg/config"
         "github.com/edimarlnx/secure-templates/pkg/connectors"
         "github.com/edimarlnx/secure-templates/pkg/envs"
         "github.com/edimarlnx/secure-templates/pkg/helpers"
@@ -120,31 +122,27 @@ var (
         appVersion = "dev"
 )
 
-func main() <span class="cov0" title="0">{
-        initApp(os.Args, nil, nil)
-}</span>
-
-func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" title="11">{
+func InitApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" title="12">{
         workdir, err := os.Getwd()
         if err != nil </span><span class="cov0" title="0">{
                 workdir = os.TempDir()
         }</span>
-        <span class="cov10" title="11">var cfg config2.SecureTemplateConfig
+        <span class="cov10" title="12">var cfg config.SecureTemplateConfig
         app := cli.NewApp()
         app.Name = appName
         app.Description = "Secure Templates is a tool to render templates using go-templates and load data values from secrets engine."
         app.Usage = appUsage
         app.Version = appVersion
         app.EnableBashCompletion = true
-        var config, output, secretFile, passphrase string
+        var cfgFile, output, secretFile, passphrase string
         var printKeys bool
-        if outfile != nil </span><span class="cov10" title="11">{
+        if outfile != nil </span><span class="cov10" title="12">{
                 app.Writer = outfile
         }</span>
-        <span class="cov10" title="11">if errOutfile != nil </span><span class="cov10" title="11">{
+        <span class="cov10" title="12">if errOutfile != nil </span><span class="cov10" title="12">{
                 app.ErrWriter = errOutfile
         }</span>
-        <span class="cov10" title="11">logging.Log.AddHook(&amp;writer.Hook{
+        <span class="cov10" title="12">logging.Log.AddHook(&amp;writer.Hook{
                 Writer: app.Writer,
                 LogLevels: []logrus.Level{
                         logrus.DebugLevel,
@@ -166,7 +164,7 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
                 Aliases:     []string{"c", "cfg"},
                 EnvVars:     []string{envs.SecTplConfigEnv},
                 Value:       "",
-                Destination: &amp;config,
+                Destination: &amp;cfgFile,
         }
         outputFlag := cli.StringFlag{
                 Name:        "output",
@@ -203,14 +201,14 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
                                 if err != nil </span><span class="cov0" title="0">{
                                         return err
                                 }</span>
-                                <span class="cov1" title="1">cfg := config2.SecureTemplateConfig{
-                                        SecretEngine: config2.SecretEngineLocalFile,
-                                        LocalFileConfig: config2.LocalFileConfig{
+                                <span class="cov1" title="1">cfg := config.SecureTemplateConfig{
+                                        SecretEngine: config.SecretEngineLocalFile,
+                                        LocalFileConfig: config.LocalFileConfig{
                                                 Filename:   secretFile,
                                                 EncPrivKey: base64.StdEncoding.EncodeToString(privateKey),
                                                 Passphrase: passphrase,
                                         },
-                                        VaultConfig: config2.VaultConfig{
+                                        VaultConfig: config.VaultConfig{
                                                 Address:      "http://localhost:8200",
                                                 Token:        "token",
                                                 SecretEngine: "kv",
@@ -246,7 +244,7 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
                                                 if len(cCtx.Args().Slice()) &lt; 3 </span><span class="cov0" title="0">{
                                                         return cli.Exit("Required secret, key and value args", 1)
                                                 }</span>
-                                                <span class="cov6" title="4">cfg := helpers.ParseConfig(config)
+                                                <span class="cov6" title="4">cfg := helpers.ParseConfig(cfgFile, true)
                                                 connector := connectors.NewConnector(cfg)
                                                 secret := cCtx.Args().Get(0)
                                                 key := cCtx.Args().Get(1)
@@ -273,7 +271,7 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
                                                 if err != nil </span><span class="cov0" title="0">{
                                                         return cli.Exit(err.Error(), 1)
                                                 }</span>
-                                                <span class="cov1" title="1">cfg := helpers.ParseConfig(config)
+                                                <span class="cov1" title="1">cfg := helpers.ParseConfig(cfgFile, true)
                                                 connector := connectors.NewConnector(cfg)
                                                 secret := cCtx.Args().Get(0)
                                                 err = connector.WriteKeys(secret, data)
@@ -286,7 +284,7 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
                         },
                 },
         }
-        <span class="cov10" title="11">app.Flags = []cli.Flag{
+        <span class="cov10" title="12">app.Flags = []cli.Flag{
                 &amp;configFlag,
                 &amp;outputFlag,
                 &amp;cli.BoolFlag{
@@ -296,7 +294,7 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
                         Destination: &amp;printKeys,
                 },
         }
-        app.Action = func(c *cli.Context) error </span><span class="cov7" title="5">{
+        app.Action = func(c *cli.Context) error </span><span class="cov7" title="6">{
                 var connector connectors.Connector
                 var printKeysValues map[string]int
                 if printKeys </span><span class="cov1" title="1">{
@@ -304,26 +302,26 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
                         connector = &amp;connectors.PrintKeysConnector{
                                 Keys: printKeysValues,
                         }
-                }</span> else<span class="cov6" title="4"> {
-                        if _, err := os.Stat(config); os.IsNotExist(err) </span><span class="cov0" title="0">{
-                                return cli.Exit(fmt.Sprintf("Config file not found: %s", config), 1)
-                        }</span>
-                        <span class="cov6" title="4">cfg = helpers.ParseConfig(config)
-                        connector = connectors.NewConnector(cfg)</span>
-                }
-                <span class="cov7" title="5">filename := c.Args().First()
+                }</span> else<span class="cov6" title="5"> {
+                        //if _, err := os.Stat(config); os.IsNotExist(err) {
+                        //        return cli.Exit(fmt.Sprintf("Config file not found: %s", config), 1)
+                        //}
+                        cfg = helpers.ParseConfig(cfgFile, false)
+                        connector = connectors.NewConnector(cfg)
+                }</span>
+                <span class="cov7" title="6">filename := c.Args().First()
                 file, err := os.Open(filename)
                 if err != nil </span><span class="cov0" title="0">{
                         return cli.Exit(fmt.Sprintf("Error on open input file %s", filename), 1)
                 }</span>
-                <span class="cov7" title="5">outputFile := c.App.Writer
+                <span class="cov7" title="6">outputFile := c.App.Writer
                 if output != "" &amp;&amp; output != "-" </span><span class="cov0" title="0">{
                         outputFile, err = os.Create(output)
                         if err != nil </span><span class="cov0" title="0">{
                                 return cli.Exit(fmt.Sprintf("Error on open output file %s", filename), 1)
                         }</span>
                 }
-                <span class="cov7" title="5">if printKeys </span><span class="cov1" title="1">{
+                <span class="cov7" title="6">if printKeys </span><span class="cov1" title="1">{
                         nullOutput, err := os.Create(os.DevNull)
                         if err != nil </span><span class="cov0" title="0">{
                                 return cli.Exit("Error on open output file /dev/null", 1)
@@ -343,19 +341,19 @@ func initApp(args []string, outfile, errOutfile io.Writer) <span class="cov10" t
                                 }</span>
                         }
 
-                } else<span class="cov6" title="4"> {
+                } else<span class="cov6" title="5"> {
                         err := render.ParseFile(cfg.Options, file, connector, outputFile)
                         if err != nil </span><span class="cov0" title="0">{
                                 return cli.Exit(err.Error(), 1)
                         }</span>
                 }
-                <span class="cov7" title="5">return nil</span>
+                <span class="cov7" title="6">return nil</span>
         }
-        <span class="cov10" title="11">appArgs := args
+        <span class="cov10" title="12">appArgs := args
         if len(args) &lt; 2 </span><span class="cov0" title="0">{
                 appArgs = append(args, "-h")
         }</span>
-        <span class="cov10" title="11">if err := app.Run(appArgs); err != nil </span><span class="cov0" title="0">{
+        <span class="cov10" title="12">if err := app.Run(appArgs); err != nil </span><span class="cov0" title="0">{
                 logging.Log.Error(err.Error())
         }</span>
 }
@@ -461,24 +459,24 @@ type Connector interface {
         Finalize()
 }
 
-func NewConnector(secTplConfig config.SecureTemplateConfig) Connector <span class="cov10" title="9">{
+func NewConnector(secTplConfig config.SecureTemplateConfig) Connector <span class="cov10" title="10">{
         var connector Connector
         switch secTplConfig.SecretEngine </span>{
         case config.SecretEngineVault:<span class="cov0" title="0">
                 connector = &amp;VaultConnector{}</span>
-        case config.SecretEngineLocalFile:<span class="cov10" title="9">
+        case config.SecretEngineLocalFile:<span class="cov9" title="9">
                 connector = &amp;LocalFileConnector{}</span>
-        case config.SecretEnginePrintKeys:<span class="cov0" title="0">
+        case config.SecretEnginePrintKeys:<span class="cov1" title="1">
                 connector = &amp;PrintKeysConnector{}</span>
         default:<span class="cov0" title="0">
                 logging.Log.Fatalf("Connector not implemented: %s\n", secTplConfig.SecretEngine)
                 return nil</span>
         }
-        <span class="cov10" title="9">err := connector.Init(secTplConfig)
+        <span class="cov10" title="10">err := connector.Init(secTplConfig)
         if err != nil </span><span class="cov0" title="0">{
                 logging.Log.Fatalf("Error on init connector: %s\n", err.Error())
         }</span>
-        <span class="cov10" title="9">return connector</span>
+        <span class="cov10" title="10">return connector</span>
 }
 </pre>
 		
@@ -649,8 +647,8 @@ func (v *LocalFileConnector) decrypt(str string) (string, error) <span class="co
 
 import (
         "errors"
-        "fmt"
         "github.com/edimarlnx/secure-templates/pkg/config"
+        "strings"
 )
 
 type PrintKeysConnector struct {
@@ -658,16 +656,24 @@ type PrintKeysConnector struct {
         Keys map[string]int
 }
 
-func (v *PrintKeysConnector) Init(_ config.SecureTemplateConfig) error <span class="cov0" title="0">{
+func (v *PrintKeysConnector) Init(_ config.SecureTemplateConfig) error <span class="cov1" title="1">{
+        v.Keys = make(map[string]int)
         return nil
 }</span>
 
-func (v *PrintKeysConnector) Secret(secretName, keyName string) any <span class="cov10" title="4">{
-        key := fmt.Sprintf("%s.%s", secretName, keyName)
-        if v.Keys[key] == 0 </span><span class="cov10" title="4">{
+func (v *PrintKeysConnector) Secret(secretName, keyName string) any <span class="cov10" title="5">{
+        var keys []string
+        if secretName != "" </span><span class="cov10" title="5">{
+                keys = append(keys, secretName)
+        }</span>
+        <span class="cov10" title="5">if keyName != "" </span><span class="cov8" title="4">{
+                keys = append(keys, keyName)
+        }</span>
+        <span class="cov10" title="5">key := strings.Join(keys, ".")
+        if v.Keys[key] == 0 </span><span class="cov10" title="5">{
                 v.Keys[key] = 1
         }</span>
-        <span class="cov10" title="4">return key</span>
+        <span class="cov10" title="5">return key</span>
 }
 
 func (v *PrintKeysConnector) Finalize() {<span class="cov0" title="0">
@@ -824,16 +830,22 @@ import (
         "strings"
 )
 
-func GetEnv(name, defaultValue string) string <span class="cov10" title="22">{
+func GetEnv(name, defaultValue string) string <span class="cov10" title="23">{
         value := os.Getenv(name)
-        if strings.TrimSpace(value) != "" </span><span class="cov5" title="4">{
+        if strings.TrimSpace(value) != "" </span><span class="cov5" title="5">{
                 return value
         }</span>
         <span class="cov9" title="18">return defaultValue</span>
 }
 
-func ParseConfig(filename string) config.SecureTemplateConfig <span class="cov7" title="9">{
-        data, err := os.ReadFile(filename)
+func ParseConfig(filename string, isConfigRequired bool) config.SecureTemplateConfig <span class="cov7" title="10">{
+        if filename == "" &amp;&amp; !isConfigRequired </span><span class="cov1" title="1">{
+                logging.Log.Warnf("Using print key as secret connector.\n")
+                return config.SecureTemplateConfig{
+                        SecretEngine: config.SecretEnginePrintKeys,
+                }
+        }</span>
+        <span class="cov7" title="9">data, err := os.ReadFile(filename)
         if err != nil </span><span class="cov0" title="0">{
                 logging.Log.Fatalf("Error on parse config file: %s\n", filename)
         }</span>
@@ -916,17 +928,17 @@ import (
 var restrictedEnvVars []string
 var allowEnvVarsRegex *regexp.Regexp
 
-func RegisterSecret(connector connectors.Connector) func(args ...string) any <span class="cov5" title="5">{
-        return func(args ...string) any </span><span class="cov10" title="21">{
-                if len(args) == 1 </span><span class="cov1" title="1">{
+func RegisterSecret(connector connectors.Connector) func(args ...string) any <span class="cov6" title="6">{
+        return func(args ...string) any </span><span class="cov10" title="22">{
+                if len(args) == 1 </span><span class="cov3" title="2">{
                         return connector.Secret(args[0], "")
                 }</span>
                 <span class="cov9" title="20">return connector.Secret(args[0], args[1])</span>
         }
 }
 
-func RegisterEnvVar(cfgOptions config.SecureTemplateConfigOptions) func(string) string <span class="cov5" title="5">{
-        if !cfgOptions.EnvAllowAccessToSecureTemplateEnvs </span><span class="cov5" title="5">{
+func RegisterEnvVar(cfgOptions config.SecureTemplateConfigOptions) func(string) string <span class="cov6" title="6">{
+        if !cfgOptions.EnvAllowAccessToSecureTemplateEnvs </span><span class="cov6" title="6">{
                 restrictedEnvVars = []string{
                         envs.LocalSecretPrivateKeyPassphraseEnv,
                         envs.SecTplConfigEnv,
@@ -938,7 +950,7 @@ func RegisterEnvVar(cfgOptions config.SecureTemplateConfigOptions) func(string) 
                         envs.VaultNsEnv,
                 }
         }</span>
-        <span class="cov5" title="5">if cfgOptions.EnvRestrictedNameRegex != "" </span><span class="cov0" title="0">{
+        <span class="cov6" title="6">if cfgOptions.EnvRestrictedNameRegex != "" </span><span class="cov0" title="0">{
                 regex, err := regexp.Compile(cfgOptions.EnvRestrictedNameRegex)
                 if err != nil </span><span class="cov0" title="0">{
                         logging.Log.Warnf("Error on parse regex: %s\n", cfgOptions.EnvRestrictedNameRegex)
@@ -947,15 +959,15 @@ func RegisterEnvVar(cfgOptions config.SecureTemplateConfigOptions) func(string) 
                 }</span>
         }
 
-        <span class="cov5" title="5">return func(envName string) string </span><span class="cov5" title="4">{
+        <span class="cov6" title="6">return func(envName string) string </span><span class="cov5" title="5">{
                 if slices.Contains(restrictedEnvVars, envName) || (allowEnvVarsRegex != nil &amp;&amp; !allowEnvVarsRegex.MatchString(envName)) </span><span class="cov0" title="0">{
                         logging.Log.Warnf("'%s' is a restricted variable name.\n", envName)
                         return ""
                 }</span>
-                <span class="cov5" title="4">if cfgOptions.EnvShowNameAsValueIfEmpty </span><span class="cov0" title="0">{
+                <span class="cov5" title="5">if cfgOptions.EnvShowNameAsValueIfEmpty </span><span class="cov0" title="0">{
                         return helpers.GetEnv(envName, envName)
                 }</span>
-                <span class="cov5" title="4">return helpers.GetEnv(envName, "")</span>
+                <span class="cov5" title="5">return helpers.GetEnv(envName, "")</span>
         }
 }
 </pre>
@@ -972,32 +984,75 @@ import (
         "text/template"
 )
 
-func funcMap(cfgOptions config.SecureTemplateConfigOptions, connector connectors.Connector) template.FuncMap <span class="cov3" title="5">{
+func funcMap(cfgOptions config.SecureTemplateConfigOptions, connector connectors.Connector) template.FuncMap <span class="cov3" title="6">{
         funcMaps := template.FuncMap{}
-        for k, v := range sprig.FuncMap() </span><span class="cov10" title="1050">{
+        for k, v := range sprig.FuncMap() </span><span class="cov10" title="1260">{
                 funcMaps[k] = v
         }</span>
-        <span class="cov3" title="5">funcMaps["env"] = RegisterEnvVar(cfgOptions)
+        <span class="cov3" title="6">funcMaps["env"] = RegisterEnvVar(cfgOptions)
         funcMaps["secret"] = RegisterSecret(connector)
         return funcMaps</span>
 }
 
-func ParseFile(cfgOptions config.SecureTemplateConfigOptions, file *os.File, connector connectors.Connector, output io.Writer) error <span class="cov3" title="5">{
+func ParseFile(cfgOptions config.SecureTemplateConfigOptions, file *os.File, connector connectors.Connector, output io.Writer) error <span class="cov3" title="6">{
         tpl, err := template.New(filepath.Base(file.Name())).
                 Funcs(funcMap(cfgOptions, connector)).
                 ParseFiles(file.Name())
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov3" title="5">return processTemplate(tpl, output)</span>
+        <span class="cov3" title="6">return processTemplate(tpl, output)</span>
 }
 
-func processTemplate(tpl *template.Template, output io.Writer) error <span class="cov3" title="5">{
+func processTemplate(tpl *template.Template, output io.Writer) error <span class="cov3" title="6">{
         err := tpl.Execute(output, nil)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov3" title="5">return nil</span>
+        <span class="cov3" title="6">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package test
+
+import (
+        "bytes"
+        "github.com/edimarlnx/secure-templates/pkg/app"
+        "strings"
+        "testing"
+)
+
+type DataTest struct {
+        Name               string
+        Args               []string
+        RequiredStrings    []string
+        RequiredErrStrings []string
+        Envs               map[string]string
+}
+
+func SuiteTest(t *testing.T, configFile string, data []DataTest) <span class="cov2" title="2">{
+        for _, tt := range data </span><span class="cov7" title="12">{
+                t.Run(tt.Name, func(t *testing.T) </span><span class="cov7" title="12">{
+                        for key, value := range tt.Envs </span><span class="cov8" title="20">{
+                                t.Setenv(key, value)
+                        }</span>
+                        <span class="cov7" title="12">buf := bytes.Buffer{}
+                        bufErr := bytes.Buffer{}
+                        app.InitApp(tt.Args, &amp;buf, &amp;bufErr)
+                        str := buf.String()
+                        strErr := bufErr.String()
+                        for _, requiredString := range tt.RequiredStrings </span><span class="cov10" title="39">{
+                                if !strings.Contains(str, requiredString) </span><span class="cov0" title="0">{
+                                        t.Fatalf("Required '%s' string not found.", requiredString)
+                                }</span>
+                        }
+                        <span class="cov7" title="12">for _, requiredErrString := range tt.RequiredErrStrings </span><span class="cov1" title="1">{
+                                if !strings.Contains(strErr, requiredErrString) </span><span class="cov0" title="0">{
+                                        t.Fatalf("Required error '%s' string not found.", requiredErrString)
+                                }</span>
+                        }
+                })
+        }
 }
 </pre>
 		
