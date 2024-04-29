@@ -20,9 +20,11 @@ type VaultConnector struct {
 	kvSecrets                    map[string]*vApi.KVSecret
 	secretIgnoreNotFoundKey      bool
 	secretShowNameAsValueIfEmpty bool
+	connectorType                config.SecretEngine
 }
 
 func (v *VaultConnector) Init(secTplConfig config.SecureTemplateConfig) error {
+	v.connectorType = secTplConfig.SecretEngine
 	cfg := vApi.DefaultConfig()
 	cfg.Address = helpers.GetEnv(envs.VaultAddrEnv, secTplConfig.VaultConfig.Address)
 	client, err := vApi.NewClient(cfg)
@@ -119,4 +121,8 @@ func (v *VaultConnector) WriteKeys(secretName string, keyValue map[string]string
 
 func (v *VaultConnector) Finalize() {
 
+}
+
+func (v *VaultConnector) ConnectorType() config.SecretEngine {
+	return v.connectorType
 }

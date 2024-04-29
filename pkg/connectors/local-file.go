@@ -21,9 +21,11 @@ type LocalFileConnector struct {
 	encPubKey                    *rsa.PublicKey
 	secretIgnoreNotFoundKey      bool
 	secretShowNameAsValueIfEmpty bool
+	connectorType                config.SecretEngine
 }
 
 func (v *LocalFileConnector) Init(secTplConfig config.SecureTemplateConfig) error {
+	v.connectorType = secTplConfig.SecretEngine
 	v.secretFile = secTplConfig.LocalFileConfig.Filename
 	v.secrets = map[string]map[string]string{}
 	encPrivKey := helpers.GetEnv(envs.LocalSecretPrivateKeyEnv, secTplConfig.LocalFileConfig.EncPrivKey)
@@ -158,4 +160,8 @@ func (v *LocalFileConnector) decrypt(str string) (string, error) {
 		return str, err
 	}
 	return string(decData), nil
+}
+
+func (v *LocalFileConnector) ConnectorType() config.SecretEngine {
+	return v.connectorType
 }

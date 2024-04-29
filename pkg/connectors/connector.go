@@ -11,6 +11,7 @@ type Connector interface {
 	WriteKey(secretName, keyName, keyValue string) error
 	WriteKeys(secretName string, keyValue map[string]string) error
 	Finalize()
+	ConnectorType() config.SecretEngine
 }
 
 func NewConnector(secTplConfig config.SecureTemplateConfig) Connector {

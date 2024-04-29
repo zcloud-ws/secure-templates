@@ -198,19 +198,14 @@ func InitApp(args []string, outfile, errOutfile io.Writer) {
 	}
 	app.Action = func(c *cli.Context) error {
 		var connector connectors.Connector
-		var printKeysValues map[string]int
 		if printKeys {
-			printKeysValues = map[string]int{}
-			connector = &connectors.PrintKeysConnector{
-				Keys: printKeysValues,
+			cfg = config.SecureTemplateConfig{
+				SecretEngine: config.SecretEnginePrintKeys,
 			}
 		} else {
-			//if _, err := os.Stat(config); os.IsNotExist(err) {
-			//	return cli.Exit(fmt.Sprintf("Config file not found: %s", config), 1)
-			//}
 			cfg = helpers.ParseConfig(cfgFile, false)
-			connector = connectors.NewConnector(cfg)
 		}
+		connector = connectors.NewConnector(cfg)
 		filename := c.Args().First()
 		file, err := os.Open(filename)
 		if err != nil {
@@ -236,6 +231,7 @@ func InitApp(args []string, outfile, errOutfile io.Writer) {
 			if err != nil {
 				return cli.Exit(err.Error(), 1)
 			}
+			printKeysValues := connector.(*connectors.PrintKeysConnector).Keys
 			for key := range printKeysValues {
 				_, err := outputFile.Write([]byte("  " + key + "\n"))
 				if err != nil {

@@ -15,7 +15,13 @@ func funcMap(cfgOptions config.SecureTemplateConfigOptions, connector connectors
 	for k, v := range sprig.FuncMap() {
 		funcMaps[k] = v
 	}
-	funcMaps["env"] = RegisterEnvVar(cfgOptions)
+	if connector.ConnectorType() == config.SecretEnginePrintKeys {
+		funcMaps["env"] = func(name string) any {
+			return connector.Secret(name, "")
+		}
+	} else {
+		funcMaps["env"] = RegisterEnvVar(cfgOptions)
+	}
 	funcMaps["secret"] = RegisterSecret(connector)
 	return funcMaps
 }
