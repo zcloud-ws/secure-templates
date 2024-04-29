@@ -2,8 +2,8 @@ package render
 
 import (
 	"github.com/Masterminds/sprig/v3"
-	"github.com/edimarlnx/secure-templates/pkg/config"
-	"github.com/edimarlnx/secure-templates/pkg/connectors"
+	"github.com/zcloud-ws/secure-templates/pkg/config"
+	"github.com/zcloud-ws/secure-templates/pkg/connectors"
 	"io"
 	"os"
 	"path/filepath"

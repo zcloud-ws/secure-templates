@@ -2,7 +2,7 @@ package test
 
 import (
 	"bytes"
-	"github.com/edimarlnx/secure-templates/pkg/app"
+	"github.com/zcloud-ws/secure-templates/pkg/app"
 	"strings"
 	"testing"
 )

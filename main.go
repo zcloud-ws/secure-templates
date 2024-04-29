@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/edimarlnx/secure-templates/pkg/app"
+	"github.com/zcloud-ws/secure-templates/pkg/app"
 	"os"
 )
 

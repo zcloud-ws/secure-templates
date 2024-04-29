@@ -24,10 +24,10 @@ docker run --rm -it --name vault-cli \
 ### Load function helpers
 
 ```shell
-. <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/vault/func-utils.sh)
+. <(wget -q -O- https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/vault/func-utils.sh)
 ```
 
-**Security Note:** Review the contents of [`user-func-utils.sh`](https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/vault/func-utils.sh) for transparency.
+**Security Note:** Review the contents of [`user-func-utils.sh`](https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/vault/func-utils.sh) for transparency.
 
 
 ### Enable the userpass Auth Method
@@ -93,12 +93,12 @@ docker run --rm -it --name vault-cli \
 Update Password and Generate TOTP Secret
 
 ```shell
-. <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/vault/user-func-utils.sh)
+. <(wget -q -O- https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/vault/user-func-utils.sh)
 user_update_password USER_TOKEN USERNAME NEW_PASSWORD
 user_generate_totp_secret USER_TOKEN METHOD_NAME USERNAME
 ```
 
-**Security Note:** Review the contents of [`user-func-utils.sh`](https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/vault/user-func-utils.sh) for transparency.
+**Security Note:** Review the contents of [`user-func-utils.sh`](https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/vault/user-func-utils.sh) for transparency.
 
 ## Additional Administrator Tasks (Optional)
 

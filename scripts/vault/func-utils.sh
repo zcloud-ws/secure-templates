@@ -170,7 +170,7 @@ docker run --rm -it --name vault-cli \\
 ### Execute the following commands on opened container shell:
 
 \`\`\`
-. <(wget -q -O- https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/vault/user-func-utils.sh)
+. <(wget -q -O- https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/vault/user-func-utils.sh)
 
 user_update_password $user_token $username NEW_PASSWORD
 

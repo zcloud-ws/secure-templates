@@ -5,11 +5,11 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/base64"
-	"github.com/edimarlnx/secure-templates/pkg/config"
-	"github.com/edimarlnx/secure-templates/pkg/envs"
-	"github.com/edimarlnx/secure-templates/pkg/helpers"
-	"github.com/edimarlnx/secure-templates/pkg/logging"
 	"github.com/go-jose/go-jose/v3/json"
+	"github.com/zcloud-ws/secure-templates/pkg/config"
+	"github.com/zcloud-ws/secure-templates/pkg/envs"
+	"github.com/zcloud-ws/secure-templates/pkg/helpers"
+	"github.com/zcloud-ws/secure-templates/pkg/logging"
 	"os"
 )
 

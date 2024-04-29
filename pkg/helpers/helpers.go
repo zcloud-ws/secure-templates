@@ -8,9 +8,9 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
-	"github.com/edimarlnx/secure-templates/pkg/config"
-	"github.com/edimarlnx/secure-templates/pkg/logging"
 	"github.com/joho/godotenv"
+	"github.com/zcloud-ws/secure-templates/pkg/config"
+	"github.com/zcloud-ws/secure-templates/pkg/logging"
 	"os"
 	"strings"
 )

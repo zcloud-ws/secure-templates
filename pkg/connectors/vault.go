@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/edimarlnx/secure-templates/pkg/config"
-	"github.com/edimarlnx/secure-templates/pkg/envs"
-	"github.com/edimarlnx/secure-templates/pkg/helpers"
-	"github.com/edimarlnx/secure-templates/pkg/logging"
 	vApi "github.com/hashicorp/vault/api"
+	"github.com/zcloud-ws/secure-templates/pkg/config"
+	"github.com/zcloud-ws/secure-templates/pkg/envs"
+	"github.com/zcloud-ws/secure-templates/pkg/helpers"
+	"github.com/zcloud-ws/secure-templates/pkg/logging"
 	"strings"
 )
 

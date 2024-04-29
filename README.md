@@ -8,18 +8,18 @@ Secure Templates is a tool to render templates using go-templates and load data 
 ### Install on /usr/local/bin with sudo
 
 ```shell
-curl -s https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/install.sh | sudo sh -
+curl -s https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/install.sh | sudo sh -
 ```
 
 ### Install on work directory without sudo
 
 ```shell
-curl -s https://raw.githubusercontent.com/edimarlnx/secure-templates/main/scripts/install.sh | sh -
+curl -s https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/install.sh | sh -
 ```
 
 ## Manual installation and Windows users
 
-Go to [releases page](https://github.com/edimarlnx/secure-templates/releases) and download the file according your
+Go to [releases page](https://github.com/zcloud-ws/secure-templates/releases) and download the file according your
 system.
 
 ## Samples
@@ -204,7 +204,10 @@ These are configuration options for the Secure Templates tool. Here's a brief ex
 
 Edimar Cardoso
 
-Emails: [edimarlnx@gmail.com](mailto:edimarlnx@gmail.com) [edimar@zcloud.ws](mailto:edimar@zcloud.ws)
+Emails: 
+- [edimarlnx@gmail.com](mailto:edimarlnx@gmail.com)
+- [edimar@zcloud.ws](mailto:edimar@zcloud.ws)
+- [oss@zcloud.ws](mailto:oss@zcloud.ws)
 
 Website: www.zcloud.ws
 

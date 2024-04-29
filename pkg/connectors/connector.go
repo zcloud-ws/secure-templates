@@ -1,8 +1,8 @@
 package connectors
 
 import (
-	"github.com/edimarlnx/secure-templates/pkg/config"
-	"github.com/edimarlnx/secure-templates/pkg/logging"
+	"github.com/zcloud-ws/secure-templates/pkg/config"
+	"github.com/zcloud-ws/secure-templates/pkg/logging"
 )
 
 type Connector interface {

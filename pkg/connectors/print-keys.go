@@ -2,7 +2,7 @@ package connectors
 
 import (
 	"errors"
-	"github.com/edimarlnx/secure-templates/pkg/config"
+	"github.com/zcloud-ws/secure-templates/pkg/config"
 	"strings"
 )
 

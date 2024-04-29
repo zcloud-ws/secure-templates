@@ -1,4 +1,4 @@
-module github.com/edimarlnx/secure-templates
+module github.com/zcloud-ws/secure-templates
 
 go 1.21.9
 
