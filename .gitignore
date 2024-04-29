@@ -1,4 +1,5 @@
 .idea/
 dist/
 secure-templates
+stpl
 local-dev
