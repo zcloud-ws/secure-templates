@@ -84,7 +84,7 @@ func InitApp(args []string, outfile, errOutfile io.Writer) {
 				&outputFlag,
 				&cli.StringFlag{
 					Name:        "secret-file",
-					Value:       fmt.Sprintf("%s/local-file-secret.json", workdir),
+					Value:       fmt.Sprintf("%s/configs/local-file-secret.json", workdir),
 					Destination: &secretFile,
 				},
 				&cli.StringFlag{

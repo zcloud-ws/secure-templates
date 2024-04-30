@@ -11,7 +11,7 @@ func Test_initApp(t *testing.T) {
 	if err != nil {
 		workdir = os.TempDir()
 	}
-	configFile := "local-file-cfg-test.json"
+	configFile := "configs/local-file-cfg-test.json"
 	tests := []DataTest{
 		{
 			Name: "init-config",
@@ -21,7 +21,7 @@ func Test_initApp(t *testing.T) {
 				"-o",
 				configFile,
 				"-secret-file",
-				fmt.Sprintf("%s/local-file-secret-test.json", workdir),
+				fmt.Sprintf("%s/configs/local-file-secret-test.json", workdir),
 				"-private-key-passphrase",
 				"test-pwd",
 			},

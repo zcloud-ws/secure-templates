@@ -45,7 +45,7 @@ system.
     "ns": "dev"
   },
   "local_file_config": {
-    "filename": "test/local-file-secret.json",
+    "filename": "test/configs/local-file-secret.json",
     "enc_priv_key": "LS0tLS...."
   },
   "options": {
@@ -79,7 +79,7 @@ USAGE:
 
 OPTIONS:
    --output value, -o value, --out value   [$SEC_TPL_OUTPUT]
-   --secret-file value                    (default: "./test/local-file-secret.json")
+   --secret-file value                    (default: "./test/configs/local-file-secret.json")
    --private-key-passphrase value         [$LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE]
    --help, -h                             show help
 2024/03/03 00:46:34 ERROR Required flag "config" not set
