@@ -18,7 +18,7 @@ func Test_no_secret_config(t *testing.T) {
 				"\"no-secret\": \"no-secret\"",
 			},
 			RequiredErrStrings: []string{
-				"Using print key as secret connector",
+				"Not implemented for no-connector no-secret",
 			},
 			Envs: map[string]string{
 				"SP_USERNAME": "dev_user",

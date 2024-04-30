@@ -23,6 +23,8 @@ func NewConnector(secTplConfig config.SecureTemplateConfig) Connector {
 		connector = &LocalFileConnector{}
 	case config.SecretEnginePrintKeys:
 		connector = &PrintKeysConnector{}
+	case config.SecretEngineNo:
+		connector = &NoConnector{}
 	default:
 		logging.Log.Fatalf("Connector not implemented: %s\n", secTplConfig.SecretEngine)
 		return nil

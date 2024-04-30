@@ -13,6 +13,7 @@ const (
 	SecretEngineVault     SecretEngine = "vault"
 	SecretEngineLocalFile SecretEngine = "local-file"
 	SecretEnginePrintKeys SecretEngine = "print-keys"
+	SecretEngineNo        SecretEngine = "no"
 	//SecretEngineOnePassword SecretEngine = "one-password"
 )
 

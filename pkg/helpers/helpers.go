@@ -25,9 +25,8 @@ func GetEnv(name, defaultValue string) string {
 
 func ParseConfig(filename string, isConfigRequired bool) config.SecureTemplateConfig {
 	if filename == "" && !isConfigRequired {
-		logging.Log.Warnf("Using print key as secret connector.\n")
 		return config.SecureTemplateConfig{
-			SecretEngine: config.SecretEnginePrintKeys,
+			SecretEngine: config.SecretEngineNo,
 		}
 	}
 	data, err := os.ReadFile(filename)
