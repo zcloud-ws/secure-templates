@@ -3,3 +3,8 @@ dist/
 secure-templates
 stpl
 local-dev
+.cursorignore
+.cursorrules
+.gitignore
+node_modules/
+.docusaurus/

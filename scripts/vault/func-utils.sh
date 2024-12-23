@@ -48,6 +48,9 @@ create_acl() {
 path "${secret_path}" {
    capabilities = ["read", "list"]
 }
+path "kv/metadata/*" {
+   capabilities = ["list"]
+}
 EOF
   fi
   if echo "$permissions" | grep -q write; then
