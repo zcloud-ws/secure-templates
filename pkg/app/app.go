@@ -36,7 +36,7 @@ func InitApp(args []string, outfile, errOutfile io.Writer) {
 	app.Usage = appUsage
 	app.Version = appVersion
 	app.EnableBashCompletion = true
-	var cfgFile, output, secretFile, passphrase string
+	var cfgFile, output, secretFile, passphrase, leftDelim, rightDelim string
 	var printKeys bool
 	if outfile != nil {
 		app.Writer = outfile
@@ -195,6 +195,20 @@ func InitApp(args []string, outfile, errOutfile io.Writer) {
 			Value:       false,
 			Destination: &printKeys,
 		},
+		&cli.StringFlag{
+			Name:        "left-delim",
+			Aliases:     []string{"ld"},
+			EnvVars:     []string{envs.SecTplLeftDelimEnv},
+			Value:       "",
+			Destination: &leftDelim,
+		},
+		&cli.StringFlag{
+			Name:        "right-delim",
+			Aliases:     []string{"rd"},
+			EnvVars:     []string{envs.SecTplRightDelimEnv},
+			Value:       "",
+			Destination: &rightDelim,
+		},
 	}
 	app.Action = func(c *cli.Context) error {
 		var connector connectors.Connector
@@ -204,6 +218,13 @@ func InitApp(args []string, outfile, errOutfile io.Writer) {
 			}
 		} else {
 			cfg = helpers.ParseConfig(cfgFile, false)
+		}
+		// CLI flags override config values for custom delimiters
+		if leftDelim != "" {
+			cfg.Options.LeftDelim = leftDelim
+		}
+		if rightDelim != "" {
+			cfg.Options.RightDelim = rightDelim
 		}
 		connector = connectors.NewConnector(cfg)
 		filename := c.Args().First()

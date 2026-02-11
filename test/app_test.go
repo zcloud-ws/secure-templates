@@ -214,6 +214,24 @@ func Test_initApp(t *testing.T) {
 				"SECRET_NAMESPACE": "dev-ns",
 			},
 		},
+		{
+			Name: "Custom delimiters",
+			Args: []string{
+				"secure-templates",
+				"--left-delim", "<<",
+				"--right-delim", ">>",
+				"samples/custom-delims.env",
+			},
+			RequiredStrings: []string{
+				"APP_USER={{ .Values.appUser }}",
+				"APP_PASSWORD=2dabe3d7c66fb75f751202fdab19266b",
+				"CLIENT_APP_USER={{ .Values.clientAppUser }}",
+				"CLIENT_APP_PASSWORD=2dabe3d7c66fb75f751202fdab19266b",
+			},
+			Envs: map[string]string{
+				"SEC_TPL_CONFIG": configFile,
+			},
+		},
 	}
 
 	SuiteTest(t, configFile, tests)

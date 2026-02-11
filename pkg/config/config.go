@@ -23,6 +23,8 @@ type SecureTemplateConfigOptions struct {
 	EnvShowNameAsValueIfEmpty          bool   `json:"envShowNameAsValueIfEmpty"`
 	EnvAllowAccessToSecureTemplateEnvs bool   `json:"envAllowAccessToSecureTemplateEnvs"`
 	EnvRestrictedNameRegex             string `json:"envRestrictedNameRegex"`
+	LeftDelim                          string `json:"leftDelim"`
+	RightDelim                         string `json:"rightDelim"`
 }
 
 type SecureTemplateConfig struct {
