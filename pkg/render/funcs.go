@@ -33,6 +33,11 @@ func RegisterEnvVar(cfgOptions config.SecureTemplateConfigOptions) func(string) 
 			envs.VaultTokenEnv,
 			envs.VaultSecretEngineEnv,
 			envs.VaultNsEnv,
+			envs.OCIConfigFileEnv,
+			envs.OCIConfigProfileEnv,
+			envs.OCIVaultOCIDEnv,
+			envs.OCICompartmentOCIDEnv,
+			envs.OCIKeyOCIDEnv,
 		}
 	}
 	if cfgOptions.EnvRestrictedNameRegex != "" {

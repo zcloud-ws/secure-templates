@@ -14,6 +14,7 @@ const (
 	SecretEngineLocalFile SecretEngine = "local-file"
 	SecretEnginePrintKeys SecretEngine = "print-keys"
 	SecretEngineNo        SecretEngine = "no"
+	SecretEngineOCIVault  SecretEngine = "oci-vault"
 	//SecretEngineOnePassword SecretEngine = "one-password"
 )
 
@@ -32,6 +33,7 @@ type SecureTemplateConfig struct {
 	VaultConfig  VaultConfig  `json:"vault_config,omitempty"`
 	//OnePasswordConfig OnePasswordConfig `json:"one_password_config,omitempty"`
 	LocalFileConfig LocalFileConfig             `json:"local_file_config,omitempty"`
+	OCIVaultConfig  OCIVaultConfig              `json:"oci_vault_config,omitempty"`
 	Options         SecureTemplateConfigOptions `json:"options"`
 }
 
@@ -51,6 +53,14 @@ type LocalFileConfig struct {
 	Passphrase string `json:"passphrase,omitempty"`
 }
 
+type OCIVaultConfig struct {
+	ConfigFile      string `json:"config_file,omitempty"`
+	Profile         string `json:"profile,omitempty"`
+	VaultOCID       string `json:"vault_ocid,omitempty"`
+	CompartmentOCID string `json:"compartment_ocid,omitempty"`
+	KeyOCID         string `json:"key_ocid,omitempty"`
+}
+
 func (cfg *SecureTemplateConfig) Json(out io.Writer) error {
 	data, err := json.MarshalIndent(cfg, "", "  ")
 	if err != nil {
@@ -63,6 +73,7 @@ func (cfg *SecureTemplateConfig) Json(out io.Writer) error {
 func (cfg *SecureTemplateConfig) ExpandEnvVars() {
 	cfg.VaultConfig.expandEnvVars()
 	cfg.LocalFileConfig.expandEnvVars()
+	cfg.OCIVaultConfig.expandEnvVars()
 }
 
 func (vCfg *VaultConfig) expandEnvVars() {
@@ -76,6 +87,14 @@ func (lCfg *LocalFileConfig) expandEnvVars() {
 	lCfg.Filename = expandEnvironmentVariables(lCfg.Filename)
 	lCfg.EncPrivKey = expandEnvironmentVariables(lCfg.EncPrivKey)
 	lCfg.Passphrase = expandEnvironmentVariables(lCfg.Passphrase)
+}
+
+func (oCfg *OCIVaultConfig) expandEnvVars() {
+	oCfg.ConfigFile = expandEnvironmentVariables(oCfg.ConfigFile)
+	oCfg.Profile = expandEnvironmentVariables(oCfg.Profile)
+	oCfg.VaultOCID = expandEnvironmentVariables(oCfg.VaultOCID)
+	oCfg.CompartmentOCID = expandEnvironmentVariables(oCfg.CompartmentOCID)
+	oCfg.KeyOCID = expandEnvironmentVariables(oCfg.KeyOCID)
 }
 
 func expandEnvironmentVariables(env string) string {

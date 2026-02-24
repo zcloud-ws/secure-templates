@@ -19,6 +19,7 @@ pkg/
     connector.go            # Connector interface (Init, Secret, WriteKey, WriteKeys, Finalize, ConnectorType)
     vault.go                # HashiCorp Vault KVv2 connector
     local-file.go           # Local file connector with RSA encryption (OAEP + SHA256)
+    oci-vault.go            # OCI Vault connector (Oracle Cloud Infrastructure)
     no-connector.go         # No-op connector (used when no config is provided)
     print-keys.go           # Collects template key references (for --print-keys flag)
   envs/envs.go              # Environment variable name constants
@@ -32,9 +33,9 @@ pkg/
 ## Key Concepts
 
 - **Connector interface**: All secret engines implement `connectors.Connector`. Factory: `connectors.NewConnector()`.
-- **Secret engines**: `vault`, `local-file`, `no` (no-op), `print-keys` (introspection).
+- **Secret engines**: `vault`, `local-file`, `oci-vault`, `no` (no-op), `print-keys` (introspection).
 - **Template functions**: `secret "name" "key"`, `env "VAR_NAME"`, all [sprig](https://masterminds.github.io/sprig/) functions.
-- **Config file**: JSON with `secret_engine`, `vault_config`, `local_file_config`, and `options` fields.
+- **Config file**: JSON with `secret_engine`, `vault_config`, `local_file_config`, `oci_vault_config`, and `options` fields.
 
 ## Commands
 
@@ -58,6 +59,11 @@ pkg/
 | `VAULT_NS` | Vault namespace |
 | `LOCAL_SECRET_PRIVATE_KEY` | Base64-encoded RSA private key |
 | `LOCAL_SECRET_PRIVATE_KEY_PASSPHRASE` | Passphrase for RSA key |
+| `OCI_CONFIG_FILE` | Path to OCI config file (default: `~/.oci/config`) |
+| `OCI_CONFIG_PROFILE` | OCI config profile (default: `DEFAULT`) |
+| `OCI_VAULT_OCID` | OCI Vault OCID |
+| `OCI_COMPARTMENT_OCID` | OCI Compartment OCID (required for write operations) |
+| `OCI_KEY_OCID` | OCI Master Encryption Key OCID (required for write operations) |
 
 ## Build & Run
 
@@ -113,3 +119,4 @@ goreleaser release --clean
 | `joho/godotenv` | .env file parsing |
 | `go-jose/go-jose/v3` | JSON serialization (used in local-file connector) |
 | `sirupsen/logrus` | Structured logging |
+| `oracle/oci-go-sdk/v65` | OCI SDK (Vault, Secrets clients) |

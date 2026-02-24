@@ -11,4 +11,9 @@ const (
 	VaultTokenEnv                      = "VAULT_TOKEN"
 	VaultSecretEngineEnv               = "VAULT_SECRET_ENGINE"
 	VaultNsEnv                         = "VAULT_NS"
+	OCIConfigFileEnv                   = "OCI_CONFIG_FILE"
+	OCIConfigProfileEnv                = "OCI_CONFIG_PROFILE"
+	OCIVaultOCIDEnv                    = "OCI_VAULT_OCID"
+	OCICompartmentOCIDEnv              = "OCI_COMPARTMENT_OCID"
+	OCIKeyOCIDEnv                      = "OCI_KEY_OCID"
 )

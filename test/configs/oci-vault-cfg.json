@@ -1,0 +1,13 @@
+{
+  "secret_engine": "oci-vault",
+  "oci_vault_config": {
+    "compartment_ocid": "$OCI_COMPARTMENT_OCID",
+    "key_ocid": "$OCI_KEY_OCID"
+  },
+  "options": {
+    "secretShowNameAsValueIfEmpty": false,
+    "secretIgnoreNotFoundKey": false,
+    "envShowNameAsValueIfEmpty": false,
+    "envAllowAccessToSecureTemplateEnvs": false
+  }
+}

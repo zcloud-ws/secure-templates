@@ -9,7 +9,7 @@ A CLI tool that renders [Go templates](https://pkg.go.dev/text/template) with se
 ## Features
 
 - Render any text file using Go template syntax with secret injection
-- Pluggable secret engines: HashiCorp Vault, local encrypted file, or no-op
+- Pluggable secret engines: HashiCorp Vault, OCI Vault, local encrypted file, or no-op
 - Built-in [sprig](https://masterminds.github.io/sprig/) template functions (100+ utility functions)
 - Custom template delimiters to avoid conflicts with Helm, Jinja, etc.
 - Environment variable support in templates and config values
@@ -187,6 +187,28 @@ Uses the [Vault KVv2](https://www.vaultproject.io/) secret engine.
 
 For local development, a Docker Compose setup is available in [`dev/vault/`](dev/vault/README.md).
 
+### OCI Vault
+
+Uses [Oracle Cloud Infrastructure Vault](https://docs.oracle.com/en-us/iaas/Content/KeyManagement/Concepts/keyoverview.htm) as the secret engine. Each OCI secret stores a single value (native key-value model).
+
+In templates, the first parameter is the **vault name** and the second is the **secret name**:
+
+```
+{{ secret "my-vault" "db_password" }}
+```
+
+This allows accessing secrets from multiple vaults in a single template. The vault is resolved by display name within the configured compartment.
+
+For single-arg calls (`{{ secret "db_password" }}`), the default vault OCID from config/env is used.
+
+| Env var | Description |
+|---------|-------------|
+| `OCI_CONFIG_FILE` | Path to OCI config file (default: `~/.oci/config`) |
+| `OCI_CONFIG_PROFILE` | OCI config profile (default: `DEFAULT`) |
+| `OCI_VAULT_OCID` | Default OCI Vault OCID (optional, used for single-arg secret calls) |
+| `OCI_COMPARTMENT_OCID` | OCI Compartment OCID (required for vault name resolution and write operations) |
+| `OCI_KEY_OCID` | OCI Master Encryption Key OCID (required for write operations) |
+
 ### Local File
 
 Stores secrets in a local JSON file encrypted with RSA (OAEP + SHA256).
@@ -210,6 +232,11 @@ Stores secrets in a local JSON file encrypted with RSA (OAEP + SHA256).
   "local_file_config": {
     "filename": "secrets.json",
     "enc_priv_key": "LS0tLS...."
+  },
+  "oci_vault_config": {
+    "vault_ocid": "$OCI_VAULT_OCID",
+    "compartment_ocid": "$OCI_COMPARTMENT_OCID",
+    "key_ocid": "$OCI_KEY_OCID"
   },
   "options": {
     "secretShowNameAsValueIfEmpty": false,
