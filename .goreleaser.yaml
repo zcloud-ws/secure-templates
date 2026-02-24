@@ -1,4 +1,4 @@
-version: 1
+version: 2
 
 before:
   hooks:
@@ -8,29 +8,30 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X app.appVersion={{.Version}}
     goos:
       - linux
       - windows
       - darwin
-    ldflags:
-      - -s -w -X app.appVersion={{.Version}}
+    goarch:
+      - amd64
+      - arm64
+
 archives:
-  - format: tar.gz
-    # this name render makes the OS and Arch compatible with the results of `uname`.
-    name_template: >-
-      {{ .ProjectName }}_
-      {{- title .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-    # use zip for windows archives
-    format_overrides:
-      - goos: windows
-        format: zip
+  - formats: [binary]
+    name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
+
+release:
+  github:
+    owner: zcloud-ws
+    name: secure-templates
+  draft: false
+  prerelease: auto
 
 changelog:
   sort: asc
+  abbrev: 7
   filters:
     exclude:
       - "^docs:"

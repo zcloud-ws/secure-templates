@@ -19,21 +19,34 @@ A CLI tool that renders [Go templates](https://pkg.go.dev/text/template) with se
 
 ### Linux and macOS
 
-Install to `/usr/local/bin` (requires sudo):
+Install the latest version (auto-detects OS and architecture):
 
 ```shell
-curl -s https://raw.githubusercontent.com/quave-one/secure-templates/main/scripts/install.sh | sudo sh -
+curl -sL https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/install.sh | bash
 ```
 
-Install to current directory (no sudo):
+The installer will place the binary in `/usr/local/bin` if writable, or `~/.local/bin` as fallback. It also creates an `stpl` alias. Use `sudo` if you need to install to a system directory:
 
 ```shell
-curl -s https://raw.githubusercontent.com/quave-one/secure-templates/main/scripts/install.sh | sh -
+curl -sL https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/install.sh | sudo bash
+```
+
+**Customize with environment variables:**
+
+| Variable | Description |
+|----------|-------------|
+| `STPL_VERSION` | Install a specific version (e.g., `0.1.0` or `v0.1.0`) |
+| `STPL_INSTALL_DIR` | Custom installation directory |
+| `STPL_ALIAS_NAME` | Custom alias name (default: `stpl`, set empty to skip) |
+
+```shell
+# Install a specific version to a custom directory
+STPL_VERSION=0.1.0 STPL_INSTALL_DIR=/opt/bin curl -sL https://raw.githubusercontent.com/zcloud-ws/secure-templates/main/scripts/install.sh | bash
 ```
 
 ### Manual / Windows
 
-Download the binary for your platform from the [releases page](https://github.com/quave-one/secure-templates/releases).
+Download the binary for your platform from the [releases page](https://github.com/zcloud-ws/secure-templates/releases).
 
 ## Quick Start
 
