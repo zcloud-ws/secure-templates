@@ -9,7 +9,7 @@ builds:
   - env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X app.appVersion={{.Version}}
+      - -s -w -X github.com/zcloud-ws/secure-templates/pkg/app.appVersion={{.Version}}
     goos:
       - linux
       - windows
