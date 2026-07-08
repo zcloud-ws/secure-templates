@@ -5,7 +5,7 @@
 CLI tool written in Go that renders Go templates with secret values from pluggable secret engines. Binary name: `secure-templates` (alias: `stpl`).
 
 **Module**: `github.com/zcloud-ws/secure-templates`
-**Go version**: 1.21.9
+**Go version**: 1.25
 **Author**: Edimar Cardoso
 
 ## Architecture

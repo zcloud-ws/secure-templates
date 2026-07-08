@@ -332,7 +332,7 @@ cd test && go test ./...
 ./coverage-update.sh
 ```
 
-Requires Go 1.21+.
+Requires Go 1.25+.
 
 ## Author
 
